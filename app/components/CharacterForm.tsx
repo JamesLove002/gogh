@@ -1,17 +1,31 @@
 "use client";
-import { Paper, Container, Card, CardContent, Typography, CardActions, Button, Input, Box, TextField, Divider } from "@mui/material";
-import { ErrorMessage, Field, Form, Formik, useFormikContext } from "formik";
-import { ICharacter } from "../types/ICharacter";
-import { string, z } from "zod";
+import { Card, CardContent, Typography, Button, Box, TextField, Divider, ButtonGroup, Grid, IconButton } from "@mui/material";
+import { Field, Form, Formik, FormikErrors } from "formik";
+import { ICharacter, IGender } from "../types/ICharacter";
+import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { GenerateCatfolkName } from "@/services/catfolkNames";
+import { ChangeEvent } from "react";
+import LockIcon from "@mui/icons-material/Lock";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 
 interface CharacterFormProps {
   character?: ICharacter;
   isNewCharacter: boolean;
+  raceLocked: boolean;
+  genderLocked: boolean;
+  nameLocked: boolean;
+  idealsLocked: boolean;
+  flawsLocked: boolean;
+  bondsLocked: boolean;
+  traitsLocked: boolean;
 }
 
 const characterSchema = z.object({
   race: z.string().optional(),
+  gender: z.enum(["male", "female", "other", ""]).optional(),
   name: z.string().min(2, "Name is required"),
   ideals: z.string().optional(),
   flaws: z.string().optional(),
@@ -20,7 +34,21 @@ const characterSchema = z.object({
 });
 
 function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
-  function fastComplete(e, setFieldValue) {
+  function fastComplete(
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    setFieldValue: {
+      (field: string, value: any, shouldValidate?: boolean | undefined): Promise<void | FormikErrors<{
+        race: string;
+        gender: string;
+        name: string;
+        ideals: string;
+        flaws: string;
+        bonds: string;
+        traits: string;
+      }>>;
+      (arg0: string, arg1: string): void;
+    }
+  ) {
     const input: string = e.target.value;
     input.split(/[,|;]/g).forEach((el: string) => {
       const lowerEl = el.toLowerCase();
@@ -39,6 +67,23 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
         }
         if (raceFound) {
           setFieldValue("race", race.trim());
+        }
+      }
+
+      // Gender
+      if (lowerEl.includes("gender")) {
+        var gender: IGender = "";
+        var genderFound: boolean = false;
+        if (lowerEl.includes("=")) {
+          gender = el.substring(el.indexOf("=") + 1, el.length) as IGender;
+          genderFound = true;
+        }
+        if (lowerEl.includes("~")) {
+          gender = el.substring(el.indexOf("~"), el.length) as IGender;
+          genderFound = true;
+        }
+        if (genderFound) {
+          setFieldValue("gender", gender.trim());
         }
       }
 
@@ -133,25 +178,29 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
     <Box className="m-20" sx={{ Width: "66%" }}>
       <Card>
         <Formik
-          initialValues={
-            character ?? {
-              race: "",
-              name: "",
-              ideals: "",
-              flaws: "",
-              bonds: "",
-              traits: ""
-            }
-          }
+          initialValues={{
+            race: "",
+            raceLocked: false,
+            gender: "",
+            genderLocked: false,
+            name: "",
+            nameLocked: false,
+            ideals: "",
+            idealsLocked: false,
+            flaws: "",
+            flawsLocked: false,
+            bonds: "",
+            bondsLocked: false,
+            traits: "",
+            traitsLocked: false
+          }}
           validationSchema={toFormikValidationSchema(characterSchema)}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              setSubmitting(false);
-            }, 400);
+          onSubmit={(values, { setSubmitting, setFieldValue }) => {
+            //!! There is no submit yet.
+            setSubmitting(false);
           }}
         >
-          {({ values, errors, touched, isSubmitting, setFieldValue, setTouched }) => (
+          {({ values, errors, touched, setFieldValue }) => (
             <CardContent>
               <Typography variant="h3" gutterBottom>
                 New Character
@@ -168,19 +217,99 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
               <Divider variant="middle" />
               <Box sx={{ my: 2 }}>
                 <Form>
-                  <Field sx={{ m: 0.7 }} as={TextField} name="race" label="Race" error={errors.race} helperText={touched.race && errors.race} fullWidth />
-                  <Field sx={{ m: 0.7 }} className="p-5" as={TextField} name="name" label="Name" error={errors.name} helperText={touched.name && errors.name} fullWidth />
+                  <Grid container>
+                    <Grid item>
+                      <Field sx={{ m: 0.7 }} as={TextField} name="race" label="Race" error={errors.race} helperText={touched.race && errors.race} fullwidth />
+                    </Grid>
+                    <Grid item alignItems="stretch" style={{ display: "flex" }}>
+                      <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                        <IconButton
+                          aria-label="lock"
+                          onClick={() => {
+                            setFieldValue("raceLocked", !values.raceLocked);
+                          }}
+                        >
+                          {values.raceLocked ? <LockIcon /> : <LockOpenIcon />}
+                        </IconButton>
+                        <IconButton aria-label="delete">
+                          <TipsAndUpdatesIcon />
+                        </IconButton>
+                      </ButtonGroup>
+                    </Grid>
+                  </Grid>
+                  <Grid container>
+                    <Grid item>
+                      <Field sx={{ m: 0.7 }} as={TextField} name="gender" label="Gender" error={errors.gender} helperText={touched.gender && errors.gender} fullWidth />
+                    </Grid>
+                    <Grid item alignItems="stretch" style={{ display: "flex" }}>
+                      <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                        <IconButton
+                          aria-label="lock"
+                          onClick={() => {
+                            setFieldValue("genderLocked", !values.genderLocked);
+                          }}
+                        >
+                          {values.genderLocked ? <LockIcon /> : <LockOpenIcon />}
+                        </IconButton>
+                        <IconButton aria-label="delete">
+                          <TipsAndUpdatesIcon />
+                        </IconButton>
+                      </ButtonGroup>
+                    </Grid>
+                  </Grid>
+                  <Grid container>
+                    <Grid item>
+                      <Field sx={{ m: 0.7 }} className="p-5" as={TextField} name="name" label="Name" error={errors.name} helperText={touched.name && errors.name} fullWidth />
+                    </Grid>
+                    <Grid item alignItems="stretch" style={{ display: "flex" }}>
+                      <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                        <IconButton
+                          aria-label="lock"
+                          onClick={() => {
+                            setFieldValue("nameLocked", !values.nameLocked);
+                          }}
+                        >
+                          {values.nameLocked ? <LockIcon /> : <LockOpenIcon />}
+                        </IconButton>
+                        <IconButton aria-label="delete">
+                          <TipsAndUpdatesIcon />
+                        </IconButton>
+                      </ButtonGroup>
+                    </Grid>
+                  </Grid>
                   <Field sx={{ m: 0.7 }} className="p-5" as={TextField} name="ideals" label="Ideals" error={errors.ideals} helperText={touched.ideals && errors.ideals} fullWidth />
                   <Field sx={{ m: 0.7 }} className="p-5" as={TextField} name="flaws" label="Flaws" error={errors.flaws} helperText={touched.flaws && errors.flaws} fullWidth />
                   <Field sx={{ m: 0.7 }} className="p-5" as={TextField} name="bonds" label="Bonds" error={errors.bonds} helperText={touched.bonds && errors.bonds} fullWidth />
                   <Field sx={{ m: 0.7 }} className="p-5" as={TextField} name="traits" label="Traits" error={errors.traits} helperText={touched.traits && errors.traits} fullWidth />
-                  <Button type="submit" disabled={isSubmitting || errors.name} variant="contained">
-                    Create Character
+                  <Button
+                    variant="contained"
+                    startIcon={<AutoAwesomeIcon />}
+                    onClick={() => {
+                      console.log("generating!" + JSON.stringify(values));
+                      if (!values.raceLocked) {
+                        setFieldValue("race", generateRace());
+                      }
+                      if (!values.genderLocked) {
+                        setFieldValue("gender", generateGender());
+                      }
+                      if (!values.nameLocked) {
+                        var lowerCaseRace = values.race.toLowerCase();
+                        if (["catfolk", "amurrun"].includes(lowerCaseRace)) {
+                          setFieldValue("name", GenerateCatfolkName(values.gender as IGender));
+                        }
+                        if ("human" == lowerCaseRace) {
+                          setFieldValue("name", Math.random() > 0.5 ? "John" : "Jane");
+                        }
+                      }
+                    }}
+                  >
+                    Generate Character
                   </Button>
                   <Button
                     onClick={() => {
                       setFieldValue("race", "");
                       setFieldValue("name", "");
+                      setFieldValue("gender", "");
                       setFieldValue("ideals", "");
                       setFieldValue("flaws", "");
                       setFieldValue("bonds", "");
@@ -189,19 +318,58 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                   >
                     Reset Character
                   </Button>
+                  <Button
+                    onClick={() => {
+                      setTimeout(() => {
+                        alert(JSON.stringify(values, null, 2));
+                      }, 400);
+                    }}
+                  >
+                    Print Character
+                  </Button>
                 </Form>
               </Box>
             </CardContent>
-            // <Box display="flex" justifyContent="flex-end">
-            //   <CardActions>
-            //     <Button variant="contained">Create Character</Button>
-            //   </CardActions>
-            // </Box>
           )}
         </Formik>
       </Card>
     </Box>
   );
+}
+
+function generateRace() {
+  return selectValueFromOptions([
+    { option: "Human", weighting: 30 },
+    { option: "Amurrun", weighting: 70 }
+  ]);
+}
+
+function generateGender() {
+  return selectValueFromOptions([
+    { option: "male", weighting: 49.95 },
+    { option: "female", weighting: 49.95 },
+    { option: "other", weighting: 0.1 }
+  ]);
+}
+
+interface OptionWeightPair {
+  option: string;
+  weighting: number;
+}
+
+function selectValueFromOptions(pairs: OptionWeightPair[]): string | null {
+  const totalWeight = pairs.reduce((sum, pair) => sum + pair.weighting, 0);
+  const randomNum = Math.random() * totalWeight;
+
+  let cumulativeWeight = 0;
+  for (let i = 0; i < pairs.length; i++) {
+    cumulativeWeight += pairs[i].weighting;
+    if (randomNum < cumulativeWeight) {
+      return pairs[i].option;
+    }
+  }
+
+  return null;
 }
 
 export default CharacterForm;

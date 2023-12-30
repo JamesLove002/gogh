@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mui/icons-material": "^5.15.2",
     "@mui/material": "^5.15.2",
     "@mui/material-nextjs": "^5.15.0",
     "formik": "^2.4.5",

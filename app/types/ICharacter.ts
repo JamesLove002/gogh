@@ -1,11 +1,14 @@
 export interface ICharacter {
   race: string;
+  gender: IGender;
   name: string;
   ideals: string;
   flaws: string;
   bonds: string;
   traits: string;
 }
+
+export type IGender = "male" | "female" | "other" | "";
 
 //id: string;
 //   powers: string;
