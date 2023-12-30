@@ -8,7 +8,7 @@ export interface ICharacter {
   traits: string;
 }
 
-export type IGender = "male" | "female" | "other" | "";
+export type IGender = "Male" | "Female" | "Other" | "";
 
 //id: string;
 //   powers: string;

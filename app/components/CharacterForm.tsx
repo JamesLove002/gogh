@@ -10,6 +10,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
+import { osirianFamilyNames } from "@/services/nameGenerator";
 
 interface CharacterFormProps {
   character?: ICharacter;
@@ -25,8 +26,8 @@ interface CharacterFormProps {
 
 const characterSchema = z.object({
   race: z.string().optional(),
-  gender: z.enum(["male", "female", "other", ""]).optional(),
-  name: z.string().min(2, "Name is required"),
+  gender: z.enum(["Male", "Female", "Other", ""]).optional(),
+  name: z.string().optional(),
   ideals: z.string().optional(),
   flaws: z.string().optional(),
   bonds: z.string().optional(),
@@ -285,21 +286,27 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                     variant="contained"
                     startIcon={<AutoAwesomeIcon />}
                     onClick={() => {
+                      var newRace = "";
+                      var newGender = "";
+                      var newName = "";
                       console.log("generating!" + JSON.stringify(values));
                       if (!values.raceLocked) {
-                        setFieldValue("race", generateRace());
+                        newRace = generateRace();
                       }
                       if (!values.genderLocked) {
-                        setFieldValue("gender", generateGender());
+                        newGender = generateGender();
                       }
                       if (!values.nameLocked) {
-                        var lowerCaseRace = values.race.toLowerCase();
-                        if (["catfolk", "amurrun"].includes(lowerCaseRace)) {
-                          setFieldValue("name", GenerateCatfolkName(values.gender as IGender));
-                        }
-                        if ("human" == lowerCaseRace) {
-                          setFieldValue("name", Math.random() > 0.5 ? "John" : "Jane");
-                        }
+                        newName = generateName(newRace, newGender);
+                      }
+                      if (!values.raceLocked) {
+                        setFieldValue("race", newRace);
+                      }
+                      if (!values.genderLocked) {
+                        setFieldValue("gender", newGender);
+                      }
+                      if (!values.nameLocked) {
+                        setFieldValue("name", newName);
                       }
                     }}
                   >
@@ -338,18 +345,37 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
 }
 
 function generateRace() {
-  return selectValueFromOptions([
-    { option: "Human", weighting: 30 },
-    { option: "Amurrun", weighting: 70 }
+  return selectValueFromWeightedOptions([
+    { option: "Human", weighting: 10 },
+    { option: "Osiriani Human", weighting: 100 },
+    { option: "Amurrun", weighting: 100 }
   ]);
 }
 
 function generateGender() {
-  return selectValueFromOptions([
-    { option: "male", weighting: 49.95 },
-    { option: "female", weighting: 49.95 },
-    { option: "other", weighting: 0.1 }
+  return selectValueFromWeightedOptions([
+    { option: "Male", weighting: 49.95 },
+    { option: "Female", weighting: 49.95 },
+    { option: "Other", weighting: 0.1 }
   ]);
+}
+
+function generateName(race: string, gender: string) {
+  var nameGender = gender;
+  var race = race.toLowerCase();
+  if (nameGender == "Other") nameGender = Math.random() > 0.5 ? "Male" : "Female";
+
+  if (["catfolk", "amurrun"].includes(race)) {
+    return GenerateCatfolkName(nameGender as IGender);
+  }
+  if ("human" == race) {
+    return nameGender == "Male" ? "Cody" : "Jane";
+  }
+  if ("osiriani human" == race) {
+    return selectValueFromOptions(osirianFamilyNames) + " " + selectValueFromOptions(osirianFamilyNames);
+  }
+
+  return "";
 }
 
 interface OptionWeightPair {
@@ -357,7 +383,7 @@ interface OptionWeightPair {
   weighting: number;
 }
 
-function selectValueFromOptions(pairs: OptionWeightPair[]): string | null {
+function selectValueFromWeightedOptions(pairs: OptionWeightPair[]): string {
   const totalWeight = pairs.reduce((sum, pair) => sum + pair.weighting, 0);
   const randomNum = Math.random() * totalWeight;
 
@@ -369,7 +395,18 @@ function selectValueFromOptions(pairs: OptionWeightPair[]): string | null {
     }
   }
 
-  return null;
+  console.error("unknown error", pairs);
+  return "error";
+}
+
+function selectValueFromOptions(options: string[]): string | null {
+  if (options.length === 0) {
+    console.error("No options provided", options);
+    return "error - no options";
+  }
+
+  const randomIndex = Math.floor(Math.random() * options.length);
+  return options[randomIndex];
 }
 
 export default CharacterForm;
