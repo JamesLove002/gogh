@@ -32,14 +32,6 @@ import { FastComplete } from "./FastComplete";
 interface CharacterFormProps {
   character?: ICharacter;
   isNewCharacter: boolean;
-  raceLocked: boolean;
-  genderLocked: boolean;
-  nameLocked: boolean;
-  idealsLocked: boolean;
-  flawsLocked: boolean;
-  bondsLocked: boolean;
-  traitsLocked: boolean;
-  jobCategoryLocked: boolean;
 }
 
 const characterSchema = z.object({
