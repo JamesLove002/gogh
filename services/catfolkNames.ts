@@ -10,7 +10,7 @@ var nm7 = ["f", "ff", "l", "ly", "lh", "ls", "lr", "lm", "ln", "m", "my", "mh", 
 var nm8 = ["", "", "", "", "", "", "", "", "", "", "h", "s"];
 
 export function GenerateCatfolkName(gender: IGender) {
-  var generateMaleName = gender == "male" || gender == "other" || (gender == "" && Math.random() > 0.5);
+  var generateMaleName = gender == "Male" || gender == "Other" || (gender == "" && Math.random() > 0.5);
   var name = "";
 
   for (var i = 0; i < 10; i++) {
