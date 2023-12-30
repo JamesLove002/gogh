@@ -1,16 +1,33 @@
 "use client";
-import { Card, CardContent, Typography, Button, Box, TextField, Divider, ButtonGroup, Grid, IconButton } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Box,
+  TextField,
+  Divider,
+  ButtonGroup,
+  Grid,
+  IconButton,
+  Autocomplete,
+  FilledTextFieldProps,
+  OutlinedTextFieldProps,
+  StandardTextFieldProps,
+  TextFieldVariants
+} from "@mui/material";
 import { Field, Form, Formik, FormikErrors } from "formik";
 import { ICharacter, IGender } from "../types/ICharacter";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { GenerateCatfolkName } from "@/services/catfolkNames";
-import { ChangeEvent } from "react";
+import { ChangeEvent, JSX } from "react";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import { osirianFamilyNames } from "@/services/nameGenerator";
+import { FastComplete } from "./FastComplete";
 
 interface CharacterFormProps {
   character?: ICharacter;
@@ -22,6 +39,7 @@ interface CharacterFormProps {
   flawsLocked: boolean;
   bondsLocked: boolean;
   traitsLocked: boolean;
+  jobCategoryLocked: boolean;
 }
 
 const characterSchema = z.object({
@@ -31,150 +49,11 @@ const characterSchema = z.object({
   ideals: z.string().optional(),
   flaws: z.string().optional(),
   bonds: z.string().optional(),
-  traits: z.string().optional()
+  traits: z.string().optional(),
+  jobCategory: z.string().optional()
 });
 
 function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
-  function fastComplete(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    setFieldValue: {
-      (field: string, value: any, shouldValidate?: boolean | undefined): Promise<void | FormikErrors<{
-        race: string;
-        gender: string;
-        name: string;
-        ideals: string;
-        flaws: string;
-        bonds: string;
-        traits: string;
-      }>>;
-      (arg0: string, arg1: string): void;
-    }
-  ) {
-    const input: string = e.target.value;
-    input.split(/[,|;]/g).forEach((el: string) => {
-      const lowerEl = el.toLowerCase();
-
-      // Race
-      if (lowerEl.includes("race")) {
-        var race: string = "";
-        var raceFound: boolean = false;
-        if (lowerEl.includes("=")) {
-          race = el.substring(el.indexOf("=") + 1, el.length);
-          raceFound = true;
-        }
-        if (lowerEl.includes("~")) {
-          race = el.substring(el.indexOf("~"), el.length);
-          raceFound = true;
-        }
-        if (raceFound) {
-          setFieldValue("race", race.trim());
-        }
-      }
-
-      // Gender
-      if (lowerEl.includes("gender")) {
-        var gender: IGender = "";
-        var genderFound: boolean = false;
-        if (lowerEl.includes("=")) {
-          gender = el.substring(el.indexOf("=") + 1, el.length) as IGender;
-          genderFound = true;
-        }
-        if (lowerEl.includes("~")) {
-          gender = el.substring(el.indexOf("~"), el.length) as IGender;
-          genderFound = true;
-        }
-        if (genderFound) {
-          setFieldValue("gender", gender.trim());
-        }
-      }
-
-      // Name
-      if (lowerEl.includes("name")) {
-        var name: string = "";
-        var nameFound: boolean = false;
-        if (lowerEl.includes("=")) {
-          name = el.substring(el.indexOf("=") + 1, el.length);
-          nameFound = true;
-        }
-        if (lowerEl.includes("~")) {
-          name = el.substring(el.indexOf("~"), el.length);
-          nameFound = true;
-        }
-        if (nameFound) {
-          setFieldValue("name", name.trim());
-        }
-      }
-
-      // Ideals
-      if (lowerEl.includes("ideals")) {
-        var ideals: string = "";
-        var idealsFound: boolean = false;
-        if (lowerEl.includes("=")) {
-          ideals = el.substring(el.indexOf("=") + 1, el.length);
-          idealsFound = true;
-        }
-        if (lowerEl.includes("~")) {
-          ideals = el.substring(el.indexOf("~"), el.length);
-          idealsFound = true;
-        }
-        if (idealsFound) {
-          setFieldValue("ideals", ideals.trim());
-        }
-      }
-
-      // Flaws
-      if (lowerEl.includes("flaws")) {
-        var flaws: string = "";
-        var flawsFound: boolean = false;
-        if (lowerEl.includes("=")) {
-          flaws = el.substring(el.indexOf("=") + 1, el.length);
-          flawsFound = true;
-        }
-        if (lowerEl.includes("~")) {
-          flaws = el.substring(el.indexOf("~"), el.length);
-          flawsFound = true;
-        }
-        if (flawsFound) {
-          setFieldValue("flaws", flaws.trim());
-        }
-      }
-
-      // Bonds
-      if (lowerEl.includes("bonds")) {
-        var bonds: string = "";
-        var bondsFound: boolean = false;
-        if (lowerEl.includes("=")) {
-          bonds = el.substring(el.indexOf("=") + 1, el.length);
-          bondsFound = true;
-        }
-        if (lowerEl.includes("~")) {
-          bonds = el.substring(el.indexOf("~"), el.length);
-          bondsFound = true;
-        }
-        if (bondsFound) {
-          setFieldValue("bonds", bonds.trim());
-        }
-      }
-
-      // Traits
-      if (lowerEl.includes("traits")) {
-        var traits: string = "";
-        var traitsFound: boolean = false;
-        if (lowerEl.includes("=")) {
-          traits = el.substring(el.indexOf("=") + 1, el.length);
-          traitsFound = true;
-        }
-        if (lowerEl.includes("~")) {
-          traits = el.substring(el.indexOf("~"), el.length);
-          traitsFound = true;
-        }
-        if (traitsFound) {
-          setFieldValue("traits", traits.trim());
-        }
-      }
-    });
-  }
-
   return (
     <Box className="m-20" sx={{ Width: "66%" }}>
       <Card>
@@ -193,7 +72,9 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
             bonds: "",
             bondsLocked: false,
             traits: "",
-            traitsLocked: false
+            traitsLocked: false,
+            jobCategory: "",
+            jobCategoryLocked: false
           }}
           validationSchema={toFormikValidationSchema(characterSchema)}
           onSubmit={(values, { setSubmitting, setFieldValue }) => {
@@ -207,13 +88,7 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                 New Character
               </Typography>
               <Box sx={{ my: 2 }}>
-                <TextField
-                  fullWidth
-                  label="Fast Complete"
-                  onChange={(e) => {
-                    fastComplete(e, setFieldValue);
-                  }}
-                />
+                <FastComplete setFieldValue={setFieldValue} />
               </Box>
               <Divider variant="middle" />
               <Box sx={{ my: 2 }}>
@@ -282,6 +157,21 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                   <Field sx={{ m: 0.7 }} className="p-5" as={TextField} name="flaws" label="Flaws" error={errors.flaws} helperText={touched.flaws && errors.flaws} fullWidth />
                   <Field sx={{ m: 0.7 }} className="p-5" as={TextField} name="bonds" label="Bonds" error={errors.bonds} helperText={touched.bonds && errors.bonds} fullWidth />
                   <Field sx={{ m: 0.7 }} className="p-5" as={TextField} name="traits" label="Traits" error={errors.traits} helperText={touched.traits && errors.traits} fullWidth />
+                  <Field
+                    sx={{ m: 0.7, width: "33%" }}
+                    className="p-5"
+                    as={Autocomplete}
+                    name="traits"
+                    label="Traits"
+                    error={errors.traits}
+                    helperText={touched.traits && errors.traits}
+                    fullWidth
+                    options={jobOptions}
+                    disablePortal
+                    renderInput={(
+                      params: JSX.IntrinsicAttributes & { variant?: TextFieldVariants | undefined } & Omit<FilledTextFieldProps | OutlinedTextFieldProps | StandardTextFieldProps, "variant">
+                    ) => <TextField {...params} label="Job Category" />}
+                  />
                   <Button
                     variant="contained"
                     startIcon={<AutoAwesomeIcon />}
@@ -292,21 +182,18 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                       console.log("generating!" + JSON.stringify(values));
                       if (!values.raceLocked) {
                         newRace = generateRace();
-                      }
-                      if (!values.genderLocked) {
-                        newGender = generateGender();
-                      }
-                      if (!values.nameLocked) {
-                        newName = generateName(newRace, newGender);
-                      }
-                      if (!values.raceLocked) {
                         setFieldValue("race", newRace);
                       }
                       if (!values.genderLocked) {
+                        newGender = generateGender();
                         setFieldValue("gender", newGender);
                       }
                       if (!values.nameLocked) {
+                        newName = generateName(newRace, newGender);
                         setFieldValue("name", newName);
+                      }
+                      if (!values.jobCategoryLocked) {
+                        setFieldValue("jobCategory", generateJobCategory());
                       }
                     }}
                   >
@@ -378,6 +265,36 @@ function generateName(race: string, gender: string) {
   return "";
 }
 
+function generateJobCategory() {
+  return selectValueFromWeightedOptions([
+    { option: "Exploration and Travel", weighting: 0.25 },
+    { option: "Herbalism", weighting: 0.25 },
+    { option: "Information and Espionage", weighting: 0.25 },
+    { option: "Academia", weighting: 0.5 },
+    { option: "Art", weighting: 0.5 },
+    { option: "Beastology", weighting: 0.5 },
+    { option: "Crime", weighting: 0.5 },
+    { option: "Health", weighting: 0.75 },
+    { option: "Adventuring", weighting: 1.0 },
+    { option: "Education", weighting: 1.0 },
+    { option: "Entertainment", weighting: 1.0 },
+    { option: "Environmental Services", weighting: 1.0 },
+    { option: "Hospitality", weighting: 1.0 },
+    { option: "Magical Arts", weighting: 1.0 },
+    { option: "Maratime", weighting: 1.0 },
+    { option: "Religion and Faith", weighting: 1.0 },
+    { option: "Rulership / Government", weighting: 1.0 },
+    { option: "Warfare and Combat", weighting: 1.0 },
+    { option: "Law and Order", weighting: 1.5 },
+    { option: "Civic Services", weighting: 2.0 },
+    { option: "Construction", weighting: 2.0 },
+    { option: "Resource Collection", weighting: 3.0 },
+    { option: "Craftsmanship", weighting: 6.0 },
+    { option: "Trade and Market", weighting: 6.0 },
+    { option: "Agriculture", weighting: 66.0 }
+  ]);
+}
+
 interface OptionWeightPair {
   option: string;
   weighting: number;
@@ -408,5 +325,33 @@ function selectValueFromOptions(options: string[]): string | null {
   const randomIndex = Math.floor(Math.random() * options.length);
   return options[randomIndex];
 }
+
+const jobOptions = [
+  "Exploration and Travel",
+  "Herbalism",
+  "Information and Espionage",
+  "Academia",
+  "Art",
+  "Beastology",
+  "Crime",
+  "Health",
+  "Adventuring",
+  "Education",
+  "Entertainment",
+  "Environmental Services",
+  "Hospitality",
+  "Magical Arts",
+  "Maratime",
+  "Religion and Faith",
+  "Rulership / Government",
+  "Warfare and Combat",
+  "Law and Order",
+  "Civic Services",
+  "Construction",
+  "Resource Collection",
+  "Craftsmanship",
+  "Trade and Market",
+  "Agriculture"
+];
 
 export default CharacterForm;
