@@ -6,6 +6,7 @@ export interface ICharacter {
   flaws: string;
   bonds: string;
   traits: string;
+  jobCategory: string;
 }
 
 export type IGender = "Male" | "Female" | "Other" | "";

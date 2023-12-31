@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.character-field .MuiOutlinedInput-notchedOutline {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
