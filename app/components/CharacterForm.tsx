@@ -47,7 +47,7 @@ const characterSchema = z.object({
 
 function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
   return (
-    <Box className="m-20" sx={{ Width: "66%" }}>
+    <Box className="character-form" sx={{ minWidth: "600px", Width: "66%" }}>
       <Card>
         <Formik
           initialValues={{
@@ -160,6 +160,14 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                         setFieldValue("bonds", "");
                         setFieldValue("traits", "");
                         setFieldValue("jobCategory", "");
+                        setFieldValue("raceLocked", false);
+                        setFieldValue("nameLocked", false);
+                        setFieldValue("genderLocked", false);
+                        setFieldValue("idealsLocked", false);
+                        setFieldValue("flawsLocked", false);
+                        setFieldValue("bondsLocked", false);
+                        setFieldValue("traitsLocked", false);
+                        setFieldValue("jobCategoryLocked", false);
                       }}
                     >
                       Reset Character

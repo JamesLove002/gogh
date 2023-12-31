@@ -6,3 +6,13 @@
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
 }
+
+.character-form {
+    /* Margin on all sides for desktop view */
+    margin: 2.5%;
+
+    /* Media query for mobile view */
+    @media (max-width: 767px) {
+        margin: 0; /* Remove margin for mobile view */
+    }
+}
