@@ -11,9 +11,10 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { generateCharacter } from "@/services/generator/generator";
 import React from "react";
-import { genderOptions } from "@/services/generator/generators/genderGenerator";
-import { raceOptions } from "@/services/generator/generators/raceGenerator";
-import { jobOptions } from "@/services/generator/generators/jobGenerator";
+import { genderOptions, generateGender } from "@/services/generator/generators/genderGenerator";
+import { generateRace, raceOptions } from "@/services/generator/generators/raceGenerator";
+import { generateJobCategory, jobOptions } from "@/services/generator/generators/jobGenerator";
+import { generateName } from "@/services/generator/generators/nameGenerator/nameGenerator";
 
 interface CharacterFormProps {
   character?: ICharacter;
@@ -70,7 +71,16 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
               <Form>
                 {/*??can I simplify this interface? Probably not really.*/}
                 <Box sx={{ my: 2 }}>
-                  <CharacterField field="race" options={raceOptions} value={values.race} fieldLocked={values.raceLocked} error={errors.race} touched={touched.race} setFieldValue={setFieldValue} />{" "}
+                  <CharacterField
+                    field="race"
+                    options={raceOptions}
+                    value={values.race}
+                    fieldLocked={values.raceLocked}
+                    error={errors.race}
+                    touched={touched.race}
+                    setFieldValue={setFieldValue}
+                    generateFunction={generateRace}
+                  />
                   <CharacterField
                     field="gender"
                     options={genderOptions}
@@ -79,8 +89,16 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                     error={errors.gender}
                     touched={touched.gender}
                     setFieldValue={setFieldValue}
+                    generateFunction={generateGender}
                   />
-                  <CharacterField field="name" fieldLocked={values.nameLocked} error={errors.name} touched={touched.name} setFieldValue={setFieldValue} />
+                  <CharacterField
+                    field="name"
+                    fieldLocked={values.nameLocked}
+                    error={errors.name}
+                    touched={touched.name}
+                    setFieldValue={setFieldValue}
+                    generateFunction={generateName(values.race, values.gender)} /*?? How can?*/
+                  />
                   <CharacterField field="ideals" fieldLocked={values.idealsLocked} error={errors.ideals} touched={touched.ideals} setFieldValue={setFieldValue} />
                   <CharacterField field="flaws" fieldLocked={values.flawsLocked} error={errors.flaws} touched={touched.flaws} setFieldValue={setFieldValue} />
                   <CharacterField field="bonds" fieldLocked={values.bondsLocked} error={errors.bonds} touched={touched.bonds} setFieldValue={setFieldValue} />
@@ -93,6 +111,7 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                     error={errors.jobCategory}
                     touched={touched.jobCategory}
                     setFieldValue={setFieldValue}
+                    generateFunction={generateJobCategory}
                   />
                 </Box>
                 <ButtonGroup sx={{ width: "100%" }}>

@@ -3,6 +3,10 @@ import { generateGender } from "./generators/genderGenerator";
 import { generateRace } from "./generators/raceGenerator";
 import { generateName } from "./generators/nameGenerator/nameGenerator";
 import { generateJobCategory } from "./generators/jobGenerator";
+import { generateBond } from "./generators/bondGenerator";
+import { generateTrait } from "./generators/traitGenerator";
+import { generateIdeal } from "./generators/idealGenerator";
+import { generateFlaw } from "./generators/flawGenerator";
 
 interface LockOptions {
   race: boolean;
@@ -31,6 +35,18 @@ export function generateCharacter({ character, locked }: GenerateCharacterProps)
   }
   if (!locked.name) {
     character.name = generateName(character.race, character.gender);
+  }
+  if (!locked.ideals) {
+    character.ideals = generateIdeal();
+  }
+  if (!locked.flaws) {
+    character.flaws = generateFlaw();
+  }
+  if (!locked.bonds) {
+    character.bonds = generateBond();
+  }
+  if (!locked.traits) {
+    character.traits = generateTrait();
   }
   if (!locked.jobCategory) {
     character.jobCategory = generateJobCategory();

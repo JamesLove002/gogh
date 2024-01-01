@@ -6,6 +6,10 @@ import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import { ToTitleCase } from "@/utils/utils";
 import CharacterFieldAutocomplete from "./CharacterFieldAutocomplete";
 import { CategorisedOption } from "@/services/generator/generatorUtils";
+import { generateRace } from "@/services/generator/generators/raceGenerator";
+import { generateGender } from "@/services/generator/generators/genderGenerator";
+import { generateName } from "@/services/generator/generators/nameGenerator/nameGenerator";
+import { generateJobCategory } from "@/services/generator/generators/jobGenerator";
 
 interface CharacterFieldProps {
   field: string;
@@ -27,9 +31,10 @@ interface CharacterFieldProps {
     }>>;
     (arg0: string, arg1: string): void;
   };
+  generateFunction?: any;
 }
 
-function CharacterField({ field, options, value, fieldLocked, error, touched, setFieldValue }: CharacterFieldProps) {
+function CharacterField({ field, options, value, fieldLocked, error, touched, setFieldValue, generateFunction }: CharacterFieldProps) {
   return (
     <Grid container>
       <Grid item sx={{ width: "calc(100% - 84px)" }}>
@@ -59,7 +64,12 @@ function CharacterField({ field, options, value, fieldLocked, error, touched, se
           >
             {fieldLocked ? <LockIcon /> : <LockOpenIcon />}
           </IconButton>
-          <IconButton sx={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0, borderTopRightRadius: "5px", borderBottomRightRadius: "5px", border: "1px solid #c4c4c4" }} aria-label="delete">
+          <IconButton
+            sx={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0, borderTopRightRadius: "5px", borderBottomRightRadius: "5px", border: "1px solid #c4c4c4" }}
+            onClick={() => {
+              setFieldValue(field, generateFunction());
+            }}
+          >
             <TipsAndUpdatesIcon />
           </IconButton>
         </ButtonGroup>
