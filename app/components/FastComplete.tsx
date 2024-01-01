@@ -1,6 +1,5 @@
 import { FormikErrors } from "formik";
 import { ChangeEvent } from "react";
-import { IGender } from "../types/ICharacter";
 import { TextField } from "@mui/material";
 
 export function FastComplete({
@@ -70,14 +69,14 @@ function fastCompleteCore(
 
     // Gender
     if (lowerEl.includes("gender")) {
-      var gender: IGender = "";
+      var gender = "";
       var genderFound: boolean = false;
       if (lowerEl.includes("=")) {
-        gender = el.substring(el.indexOf("=") + 1, el.length) as IGender;
+        gender = el.substring(el.indexOf("=") + 1, el.length);
         genderFound = true;
       }
       if (lowerEl.includes("~")) {
-        gender = el.substring(el.indexOf("~"), el.length) as IGender;
+        gender = el.substring(el.indexOf("~"), el.length);
         genderFound = true;
       }
       if (genderFound) {
@@ -103,7 +102,7 @@ function fastCompleteCore(
     }
 
     // Ideals
-    if (lowerEl.includes("ideals")) {
+    if (lowerEl.includes("ideal")) {
       var ideals: string = "";
       var idealsFound: boolean = false;
       if (lowerEl.includes("=")) {
@@ -120,7 +119,7 @@ function fastCompleteCore(
     }
 
     // Flaws
-    if (lowerEl.includes("flaws")) {
+    if (lowerEl.includes("flaw")) {
       var flaws: string = "";
       var flawsFound: boolean = false;
       if (lowerEl.includes("=")) {
@@ -137,7 +136,7 @@ function fastCompleteCore(
     }
 
     // Bonds
-    if (lowerEl.includes("bonds")) {
+    if (lowerEl.includes("bond")) {
       var bonds: string = "";
       var bondsFound: boolean = false;
       if (lowerEl.includes("=")) {
@@ -154,7 +153,7 @@ function fastCompleteCore(
     }
 
     // Traits
-    if (lowerEl.includes("traits")) {
+    if (lowerEl.includes("trait")) {
       var traits: string = "";
       var traitsFound: boolean = false;
       if (lowerEl.includes("=")) {
@@ -171,7 +170,7 @@ function fastCompleteCore(
     }
 
     // Job Category
-    if (lowerEl.includes("jobcategory") || lowerEl.includes("job category")) {
+    if (lowerEl.includes("jobcategory") || lowerEl.includes("job category") || lowerEl.includes("job")) {
       var jobcategory: string = "";
       var jobcategoryFound: boolean = false;
       if (lowerEl.includes("=")) {
@@ -183,7 +182,7 @@ function fastCompleteCore(
         jobcategoryFound = true;
       }
       if (jobcategoryFound) {
-        setFieldValue("jobcategory", jobcategory.trim());
+        setFieldValue("jobCategory", jobcategory.trim());
       }
     }
   });

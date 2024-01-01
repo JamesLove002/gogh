@@ -8,11 +8,19 @@
 }
 
 .character-form {
+    max-width: 1200px;
+
     /* Margin on all sides for desktop view */
     margin: 2.5%;
 
     /* Media query for mobile view */
     @media (max-width: 767px) {
         margin: 0; /* Remove margin for mobile view */
+    }
+
+    @media (min-width: 1260px) {
+        margin-top: 30px; 
+        margin-left: auto; 
+        margin-right: auto; 
     }
 }

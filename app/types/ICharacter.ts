@@ -1,6 +1,6 @@
 export interface ICharacter {
   race: string;
-  gender: IGender;
+  gender: string;
   name: string;
   ideals: string;
   flaws: string;
@@ -8,8 +8,6 @@ export interface ICharacter {
   traits: string;
   jobCategory: string;
 }
-
-export type IGender = "Male" | "Female" | "Other" | "";
 
 //id: string;
 //   powers: string;
