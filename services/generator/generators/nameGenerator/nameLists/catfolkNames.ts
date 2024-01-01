@@ -1,5 +1,3 @@
-import { IGender } from "@/app/types/ICharacter";
-
 var nm1 = ["br", "c", "cr", "dr", "f", "g", "gr", "j", "k", "kr", "m", "n", "p", "pr", "q", "qr", "r", "t", "z"];
 var nm2 = ["a", "e", "i", "o", "u", "a", "e", "i", "o", "u", "a", "e", "i", "o", "u", "a", "e", "i", "o", "u", "a", "e", "i", "o", "u", "y", "y", "ou", "au", "ei"];
 var nm3 = ["c", "cc", "cd", "cb", "g", "gg", "gt", "gb", "gd", "k", "kk", "kh", "kt", "mb", "mk", "mq", "nq", "nk", "ng", "q", "qh", "r", "rr", "rq", "rk", "th", "w"];
@@ -9,7 +7,7 @@ var nm6 = ["a", "e", "i", "o", "u"];
 var nm7 = ["f", "ff", "l", "ly", "lh", "ls", "lr", "lm", "ln", "m", "my", "mh", "n", "ny", "nh", "ph", "phr", "r", "rr", "ry", "rh", "sy", "sh", "sr", "sl", "th", "ty", "y"];
 var nm8 = ["", "", "", "", "", "", "", "", "", "", "h", "s"];
 
-export function GenerateCatfolkName(gender: IGender) {
+export function GenerateCatfolkName(gender: string) {
   var generateMaleName = gender == "Male" || gender == "Other" || (gender == "" && Math.random() > 0.5);
   var name = "";
 
