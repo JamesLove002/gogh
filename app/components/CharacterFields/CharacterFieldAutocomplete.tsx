@@ -28,7 +28,7 @@ interface AutoCharacterFieldProps {
   };
 }
 
-const filter = createFilterOptions<OptionType>();
+const filter = createFilterOptions<OptionType>({ limit: 100 });
 
 export default function CharacterFieldAutocomplete({ options, field, value, error, touched, setFieldValue }: AutoCharacterFieldProps) {
   const JobOptionsProbabilitied: OptionType[] = options

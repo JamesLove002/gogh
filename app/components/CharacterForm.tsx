@@ -1,5 +1,5 @@
 "use client";
-import { Card, CardContent, Typography, Button, Box, Divider, ButtonGroup } from "@mui/material";
+import { Card, CardContent, Typography, Button, Box, Divider, ButtonGroup, useMediaQuery } from "@mui/material";
 import { Form, Formik } from "formik";
 import { ICharacter } from "../types/ICharacter";
 import { z } from "zod";
@@ -37,6 +37,8 @@ const characterSchema = z.object({
 });
 
 function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
+  const matches = useMediaQuery("(min-width:600px)");
+
   return (
     <Box className="character-form" sx={{ minWidth: "600px", Width: "66%" }}>
       <Card>
@@ -154,7 +156,7 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                     generateFunction={generateJobCategory}
                   />
                 </Box>
-                <ButtonGroup sx={{ width: "100%" }}>
+                <ButtonGroup fullWidth orientation={`${matches ? `horizontal` : `vertical`}`}>
                   <Button
                     sx={{ width: "calc(100%/3)" }}
                     variant="contained"
