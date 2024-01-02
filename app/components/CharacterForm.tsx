@@ -15,6 +15,10 @@ import { genderOptions, generateGender } from "@/services/generator/generators/g
 import { generateRace, raceOptions } from "@/services/generator/generators/raceGenerator";
 import { generateJobCategory, jobOptions } from "@/services/generator/generators/jobGenerator";
 import { generateName } from "@/services/generator/generators/nameGenerator/nameGenerator";
+import { generateIdeal, idealOptions } from "@/services/generator/generators/idealGenerator";
+import { flawOptions, generateFlaw } from "@/services/generator/generators/flawGenerator";
+import { bondOptions, generateBond } from "@/services/generator/generators/bondGenerator";
+import { generateTrait, traitOptions } from "@/services/generator/generators/traitGenerator";
 
 interface CharacterFormProps {
   character?: ICharacter;
@@ -99,10 +103,46 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                     setFieldValue={setFieldValue}
                     generateFunction={generateName(values.race, values.gender)} /*?? How can?*/
                   />
-                  <CharacterField field="ideals" fieldLocked={values.idealsLocked} error={errors.ideals} touched={touched.ideals} setFieldValue={setFieldValue} />
-                  <CharacterField field="flaws" fieldLocked={values.flawsLocked} error={errors.flaws} touched={touched.flaws} setFieldValue={setFieldValue} />
-                  <CharacterField field="bonds" fieldLocked={values.bondsLocked} error={errors.bonds} touched={touched.bonds} setFieldValue={setFieldValue} />
-                  <CharacterField field="traits" fieldLocked={values.traitsLocked} error={errors.traits} touched={touched.traits} setFieldValue={setFieldValue} />
+                  <CharacterField
+                    field="ideals"
+                    options={idealOptions}
+                    value={values.ideals}
+                    fieldLocked={values.idealsLocked}
+                    error={errors.ideals}
+                    touched={touched.ideals}
+                    setFieldValue={setFieldValue}
+                    generateFunction={generateIdeal}
+                  />
+                  <CharacterField
+                    field="flaws"
+                    options={flawOptions}
+                    value={values.flaws}
+                    fieldLocked={values.flawsLocked}
+                    error={errors.flaws}
+                    touched={touched.flaws}
+                    setFieldValue={setFieldValue}
+                    generateFunction={generateFlaw}
+                  />
+                  <CharacterField
+                    field="bonds"
+                    options={bondOptions}
+                    value={values.bonds}
+                    fieldLocked={values.bondsLocked}
+                    error={errors.bonds}
+                    touched={touched.bonds}
+                    setFieldValue={setFieldValue}
+                    generateFunction={generateBond}
+                  />
+                  <CharacterField
+                    field="traits"
+                    options={traitOptions}
+                    value={values.traits}
+                    fieldLocked={values.traitsLocked}
+                    error={errors.traits}
+                    touched={touched.traits}
+                    setFieldValue={setFieldValue}
+                    generateFunction={generateTrait}
+                  />
                   <CharacterField
                     field="jobCategory"
                     options={jobOptions}
