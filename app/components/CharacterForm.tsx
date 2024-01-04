@@ -19,7 +19,7 @@ import { generateIdeal, idealOptions } from "@/services/generator/generators/ide
 import { flawOptions, generateFlaw } from "@/services/generator/generators/flawGenerator";
 import { bondOptions, generateBond } from "@/services/generator/generators/bondGenerator";
 import { generateTrait, traitOptions } from "@/services/generator/generators/traitGenerator";
-import { CompareSimilarity, runInference } from "@/services/hf/example";
+import { CompareSimilarity } from "@/services/hf/example";
 import { SentenceSimilarityOutput } from "@huggingface/inference";
 
 interface CharacterFormProps {
