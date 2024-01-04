@@ -19,6 +19,8 @@ import { generateIdeal, idealOptions } from "@/services/generator/generators/ide
 import { flawOptions, generateFlaw } from "@/services/generator/generators/flawGenerator";
 import { bondOptions, generateBond } from "@/services/generator/generators/bondGenerator";
 import { generateTrait, traitOptions } from "@/services/generator/generators/traitGenerator";
+import { CompareSimilarity, runInference } from "@/services/hf/example";
+import { SentenceSimilarityOutput } from "@huggingface/inference";
 
 interface CharacterFormProps {
   character?: ICharacter;
@@ -224,12 +226,21 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
                     sx={{ width: "calc(100%/3)" }}
                     startIcon={<OpenInNewIcon />}
                     onClick={() => {
-                      setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
-                      }, 400);
+                      const flawInstances = flawOptions.map((flaw) => {
+                        return flaw.instance;
+                      });
+                      CompareSimilarity(values.jobCategory, flawInstances).then((result: SentenceSimilarityOutput) => {
+                        const flawSimilarityResults = flawInstances
+                          .map((flaw, index) => {
+                            return { flaw: flaw, scoreText: (result[index] * 100).toFixed(2) + "%", score: result[index] * 100 };
+                          })
+                          .sort((a, b) => b.score - a.score);
+                        console.log("Flaw Similarity Results for: " + '"' + values.jobCategory + '"');
+                        console.log(flawSimilarityResults);
+                      });
                     }}
                   >
-                    Print Character
+                    Job Category & Flaw Similarity Analysis
                   </Button>
                 </ButtonGroup>
               </Form>
@@ -242,3 +253,41 @@ function CharacterForm({ character, isNewCharacter }: CharacterFormProps) {
 }
 
 export default CharacterForm;
+// Use user inputs to compare similarities
+//CompareSimilarity(values.name, [values.race, values.gender, values.ideals, values.flaws, values.bonds, values.traits, values.jobCategory]).then(
+//       console.log(
+//         "Similarity Results for: " +
+//           '"' +
+//           values.name +
+//           '"' +
+//           ": " +
+//           "\r\n " +
+//           values.race +
+//           ": " +
+//           (result[0] * 100).toFixed(2) +
+//           "%\r\n " +
+//           values.gender +
+//           ": " +
+//           (result[1] * 100).toFixed(2) +
+//           "%\r\n" +
+//           values.ideals +
+//           ": " +
+//           (result[2] * 100).toFixed(2) +
+//           "%\r\n" +
+//           values.flaws +
+//           ": " +
+//           (result[3] * 100).toFixed(2) +
+//           "%\r\n" +
+//           values.bonds +
+//           ": " +
+//           (result[4] * 100).toFixed(2) +
+//           "%\r\n" +
+//           values.traits +
+//           ": " +
+//           (result[5] * 100).toFixed(2) +
+//           "%\r\n" +
+//           values.jobCategory +
+//           ": " +
+//           (result[6] * 100).toFixed(2) +
+//           "%"
+//       );
