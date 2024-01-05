@@ -53,6 +53,7 @@ export default function CharacterFieldAutocomplete({ options, field, value, erro
       className="character-field"
       sx={{ m: 0.7, marginRight: 0, marginLeft: 0 }} //??Why do the margins mess up the width and cause overlap?
       value={value}
+      autoSelect={true}
       onChange={(_, newValue) => {
         if (typeof newValue === "object") {
           setFieldValue(field, newValue?.value);
