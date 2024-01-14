@@ -1,10 +1,13 @@
-import { CategorisedOption, selectValuesFromWeightedCategorisedOptions } from "../generatorUtils";
+// 1. Moral Flaws: These are ethical failings indicating a lack of or skewed moral compass. These flaws often involve actions that violate accepted ethical norms and values, leading to harm or injustice.
+// 2. Psychological Flaws: These are mental or emotional issues that negatively affect a character's behavior, judgement, or ability to function.
+// 3. Social Flaws: This category covers deficiencies in social interactions or relationships.
+// 4. Emotional Flaws: Tied to a character's ability to manage and express their emotions in a healthy way
+// 5. Physical Flaws: These are physical constraints that limit a character's abilities.
+// 6. Intelligence Flaws: These involve shortcomings in a character's intellect, reasoning, or knowledge.
+// 7. Belief Flaws: This class of flaws relates to problematic views or principles the character holds.
+// 8. Professional Conduct Flaws: These are flaws rooted in a character's performance or behavior within their occupation.
+// 9. Vices: These are compulsive or habitual negative behaviors often tied to personal desires or impulses.
 
-export function generateFlaw() {
-  return selectValuesFromWeightedCategorisedOptions(flawOptions);
-}
-
-export const flawOptions: CategorisedOption[] = [
   { category: "Moral", subCategory: "", instance: "Greed (Avarice): I have an insatiable desire for wealth and possessions, often at the expense of others' needs.", instanceWeight: 1 },
   { category: "Moral", subCategory: "", instance: "Envy (Jealousy): I often feel resentful when others have what I perceive as better possessions, success, or qualities.", instanceWeight: 1 },
   { category: "Moral", subCategory: "", instance: "Wrath (Anger): I frequently experience intense anger and hostility, sometimes losing control.", instanceWeight: 1 },
@@ -686,14 +689,4 @@ export const flawOptions: CategorisedOption[] = [
   { category: "Vice", subCategory: "", instance: "Pessimism (Negativity): I have a pessimistic outlook, often expecting the worst in situations.", instanceWeight: 1 },
   { category: "Vice", subCategory: "", instance: "Sarcasm (Biting Wit): I use sarcasm frequently, which can be hurtful or inappropriate.", instanceWeight: 1 },
   { category: "Vice", subCategory: "", instance: "Gossip (Rumor-Mongering): I engage in spreading gossip, often discussing others' private affairs.", instanceWeight: 1 }
-];
-
-// 1. Moral Flaws: These are ethical failings indicating a lack of or skewed moral compass. These flaws often involve actions that violate accepted ethical norms and values, leading to harm or injustice.
-// 2. Psychological Flaws: These are mental or emotional issues that negatively affect a character's behavior, judgement, or ability to function.
-// 3. Social Flaws: This category covers deficiencies in social interactions or relationships.
-// 4. Emotional Flaws: Tied to a character's ability to manage and express their emotions in a healthy way
-// 5. Physical Flaws: These are physical constraints that limit a character's abilities.
-// 6. Intelligence Flaws: These involve shortcomings in a character's intellect, reasoning, or knowledge.
-// 7. Belief Flaws: This class of flaws relates to problematic views or principles the character holds.
-// 8. Professional Conduct Flaws: These are flaws rooted in a character's performance or behavior within their occupation.
-// 9. Vices: These are compulsive or habitual negative behaviors often tied to personal desires or impulses.
+]
