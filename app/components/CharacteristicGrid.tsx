@@ -197,3 +197,15 @@ export default function CharacteristicGrid({primaryCategoryData, rows, setRows}:
     </Box>
   );
 }
+
+export function getRowsFromCategoryData(primaryCategoryData: PrimaryCategoryData[]) {
+  var initialRows: GridValidRowModel[] = primaryCategoryData.map((primaryCategoryData) => {
+    return {
+      id: randomId(),
+      primaryCategory: primaryCategoryData.primaryCategory,
+      primaryCategoryDescriptor: primaryCategoryData.primaryCategoryDescriptor,
+    };  
+    })
+
+  return initialRows;
+}
