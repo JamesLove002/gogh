@@ -2,14 +2,15 @@ import OpenAI from "openai";
 
 const characteristic = "Ideals and values"
 const example = 
-`[{"category": "Integrity" - "Encompassing honor, honesty, and moral uprightness, with a steadfast adherence to a personal or communal ethical code."},
-{"category": "Compassion" - "Integrating empathy with acts of kindness and altruism, addressing the emotional and practical needs of others."},
-{"category": "Serenity", "descriptor": "Capturing harmony, equilibrium, and peace, focusing on the pursuit of balance in one's inner life and external surroundings, and the reduction of strife."}]`
+`Valid JSON Array:
+[{"primaryCategory": "Integrity", "primaryCategoryDescriptor": "Encompassing honor, honesty, and moral uprightness, with a steadfast adherence to a personal or communal ethical code."},
+{"primaryCategory": "Compassion", "primaryCategoryDescriptor": "Integrating empathy with acts of kindness and altruism, addressing the emotional and practical needs of others."},
+{"primaryCategory": "Serenity", "primaryCategoryDescriptor": "Capturing harmony, equilibrium, and peace, focusing on the pursuit of balance in one's inner life and external surroundings, and the reduction of strife."}]`
 
 const p1GetPrimaryCategories = 
 `Generate a rich, diverse set of 10-40 primary categories that we can use to categorise every conceivable character ${characteristic}. 
 
-Provide the response in the following format: 
+Provide the response in the following format, including a valid JSON Array: 
 Count: 3. 
 The following rich list of diverse primary categories are all unqiue and can be used to group secondary categories which cover 1-5000 possible ${characteristic}:
 ${example}`

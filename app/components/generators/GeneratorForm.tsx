@@ -16,8 +16,14 @@ import {
   } from '@mui/x-data-grid-generator';
 import { useEffect, useState } from 'react';
 import OpenAI from 'openai';
-import { Formik } from 'formik';
-import { set } from 'zod';
+import { Field, Formik } from 'formik';
+import {
+  randomId,
+} from '@mui/x-data-grid-generator';
+import {
+  GridValidRowModel,
+} from '@mui/x-data-grid';
+
 
 export type PrimaryCategoryData = {
     primaryCategory: string;
@@ -61,7 +67,20 @@ function GeneratorForm({ characteristic }: GeneratorFormProps) {
   const [assistant, setAssistant] = useState<OpenAI.Beta.Assistants.Assistant>();
   const [thread, setThread] = useState<OpenAI.Beta.Threads.Thread>();
   const [prompt1Characteristics, setPrompt1Characteristics] = useState<PrimaryCategoryData[]>(examplePrimaryCategoryData);
+  const [rows, setRows] = React.useState(getRowsFromCategoryData(examplePrimaryCategoryData));
   
+  function getRowsFromCategoryData(primaryCategoryData: PrimaryCategoryData[]) {
+    var initialRows: GridValidRowModel[] = primaryCategoryData.map((primaryCategoryData) => {
+      return {
+        id: randomId(),
+        primaryCategory: primaryCategoryData.primaryCategory,
+        primaryCategoryDescriptor: primaryCategoryData.primaryCategoryDescriptor,
+      };  
+      })
+  
+    return initialRows;
+  }
+
   async function handleSendClick(prompt: string, openAI: OpenAI, assistant?: OpenAI.Beta.Assistants.Assistant, thread?: OpenAI.Beta.Threads.Thread) {
     if (assistant === undefined || thread === undefined) {
         console.log("assistant or thread undefined");
@@ -70,7 +89,7 @@ function GeneratorForm({ characteristic }: GeneratorFormProps) {
         let result = await RunPrompt(openAI, assistant, thread, prompt);
         const jsonArray = findJsonArray(result);
         console.log(jsonArray); // Outputs: [1, 2, 3]
-        setPrompt1Characteristics(jsonArray);
+        setRows(getRowsFromCategoryData(jsonArray));
     }
     }
 
@@ -126,14 +145,14 @@ function GeneratorForm({ characteristic }: GeneratorFormProps) {
           Prompt 1 - Generate Starting Set
         </AccordionSummary>
           <AccordionDetails>
-              <TextField fullWidth multiline defaultValue={values.prompt1} />
+              <Field as={TextField} id="prompt1" name="prompt1" placeholder="prompt1"  fullWidth multiline defaultValue={values.prompt1} />
               <Button
                   variant="contained"
                   endIcon={<SendIcon />}
                   onClick={() => handleSendClick(values.prompt1, openAI, assistant, thread)}>
                     Send
               </Button>
-            <CharacteristicGrid primaryCategoryData={prompt1Characteristics}/>
+            <CharacteristicGrid primaryCategoryData={prompt1Characteristics} rows={rows} setRows={setRows}/>
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>

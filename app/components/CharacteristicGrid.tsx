@@ -17,13 +17,11 @@ import {
   GridEventListener,
   GridRowId,
   GridRowModel,
+  GridValidRowModel,
   GridRowEditStopReasons,
 } from '@mui/x-data-grid';
 import {
-  randomCreatedDate,
-  randomTraderName,
   randomId,
-  randomArrayItem,
 } from '@mui/x-data-grid-generator';
 import { PrimaryCategoryData } from './generators/GeneratorForm';
 
@@ -55,25 +53,13 @@ function EditToolbar(props: EditToolbarProps) {
   );
 }
 
-
-function getInitialRows(primaryCategoryData: PrimaryCategoryData[]) {
-  var initialRows: GridRowModel[] = primaryCategoryData.map((primaryCategoryData) => {
-    return {
-      id: randomId(),
-      primaryCategory: primaryCategoryData.primaryCategory,
-      primaryCategoryDescriptor: primaryCategoryData.primaryCategoryDescriptor,
-    };  
-    })
-
-  return initialRows;
-}
-
 type CharacteristicGridProps = {
   primaryCategoryData: PrimaryCategoryData[];
+  rows: GridValidRowModel[];
+  setRows: React.Dispatch<React.SetStateAction<GridValidRowModel[]>>
 };
 
-export default function CharacteristicGrid({primaryCategoryData}: CharacteristicGridProps) {
-  const [rows, setRows] = React.useState(getInitialRows(primaryCategoryData));
+export default function CharacteristicGrid({primaryCategoryData, rows, setRows}: CharacteristicGridProps) {
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
 
   const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
@@ -123,11 +109,11 @@ export default function CharacteristicGrid({primaryCategoryData}: Characteristic
     // filterable: false,
     // renderCell: (index) =>
     //   index.api.getRowIndexRelativeToVisibleRows(index.row.code) + 1, },
-    { field: 'primaryCategory', headerName: 'Primary Category', width: 180, editable: true },
+    { field: 'primaryCategory', headerName: 'Primary Category', width: 100, editable: true },
     {
       field: 'primaryCategoryDescriptor',
       headerName: 'Descriptor',
-      width: 180*3,
+      width: 900,
       align: 'left',
       headerAlign: 'left',
       editable: true,
