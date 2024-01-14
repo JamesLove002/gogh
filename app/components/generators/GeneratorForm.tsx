@@ -7,20 +7,18 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
-import { Box, TextField, Typography } from '@mui/material';
-import { RunPrompt, getAssistant, getPrompt1InitialPrimaryCategories, getThread } from '@/services/gpt/gpt';
+import { AppBar, Box, Card, CardContent, CardHeader, Grid, IconButton, Paper, TextField, Toolbar, Typography } from '@mui/material';
+import { RunPrompt, getAssistant, getPrompt1Default, getPrompt1InitialPrimaryCategories, getThread } from '@/services/gpt/gpt';
 import CharacteristicGrid, { getRowsFromCategoryData } from '../CharacteristicGrid';
 import SendIcon from '@mui/icons-material/Send';
 import { useEffect, useState } from 'react';
 import OpenAI from 'openai';
-import { Field, Formik } from 'formik';
-import {
-  randomId,
-} from '@mui/x-data-grid-generator';
+import { Formik } from 'formik';
 import {
   GridValidRowModel,
 } from '@mui/x-data-grid';
 import TimeProgressTracker from './TimeProgressTracker.tsx/TimeProgressTracker';
+import { Save } from '@mui/icons-material';
 
 export type PrimaryCategoryData = {
     primaryCategory: string;
@@ -30,16 +28,11 @@ export type PrimaryCategoryData = {
 const examplePrimaryCategoryData: PrimaryCategoryData[] = [
     {
         primaryCategory: "Category",
-        primaryCategoryDescriptor: "Descriptor",
+        primaryCategoryDescriptor: "DescriptorDescriptorDescriptorDescriptorDescriptorDescriptorDescriptor",
     }
 ];
 
-interface GeneratorFormProps {
-  characteristic: string;
-}
-
-function GeneratorForm({ characteristic }: GeneratorFormProps) {
-
+function GeneratorForm() {
   //Open AI setup
   const [openAI, setOpenAI] = useState(new OpenAI({
       apiKey: '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',
@@ -59,7 +52,14 @@ function GeneratorForm({ characteristic }: GeneratorFormProps) {
   }
 
   //Setup Form State
+  const [characteristic, setCharacteristic] = useState("Ideal");
+
+  //Result
+  const [resultCharacteristics, setResultCharacteristics] = useState<PrimaryCategoryData[]>(examplePrimaryCategoryData);
+  const [resultCharacteristicRows, setResultCharacteristicRows] = React.useState(getRowsFromCategoryData(examplePrimaryCategoryData));
+
   //Prompt 1
+  const [prompt1, setPrompt1] = useState<string>(getPrompt1Default(characteristic))
   const [prompt1Characteristics, setPrompt1Characteristics] = useState<PrimaryCategoryData[]>(examplePrimaryCategoryData);
   const [prompt1CharacteristicRows, setPrompt1CharacteristicRows] = React.useState(getRowsFromCategoryData(examplePrimaryCategoryData));
   const [prompt1Processing, setPrompt1Processing] = useState(false);
@@ -81,19 +81,21 @@ function GeneratorForm({ characteristic }: GeneratorFormProps) {
     }
 
   return (
-    <Formik
+  <Grid container spacing={2} sx={{ margin: 1, height: "99vh"}}>
+        <Grid item xs={6} sx={{height: "100%"}}>
+          <Card sx={{height: "100%"}}>
+            <CardHeader title={`Process - ${characteristic} Generator`}/>
+            <CardContent>
+            <Formik
     initialValues={{
-      prompt1: getPrompt1InitialPrimaryCategories(characteristic),
+      prompt1: getPrompt1Default(characteristic),
     }}
     onSubmit={(values) => console.log("Submitting!" + values) /*Not yet implemented*/}
-  >
-    {({ values, errors, touched, setFieldValue }) => (
+    >
+    {({ values }) => (
         <>
-          <Typography variant="h3" gutterBottom>
-            {characteristic} Generator - {thread?.id}
-          </Typography>
           <Box sx={{ my: 2 }}>
-        <TextField label="Characteristic" defaultValue={characteristic} fullWidth/>
+        <TextField label="Characteristic" defaultValue={characteristic} fullWidth onChange={(e) => {setCharacteristic(e.target.value)}}/>
 
       <Accordion defaultExpanded>
         <AccordionSummary
@@ -101,53 +103,47 @@ function GeneratorForm({ characteristic }: GeneratorFormProps) {
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          Prompt 1 - Generate Starting Set
+          {`Step 1 - Generate Starting ${characteristic} Primary Categories`}
         </AccordionSummary>
           <AccordionDetails>
-              <Field as={TextField} id="prompt1" name="prompt1" placeholder="prompt1"  fullWidth multiline defaultValue={values.prompt1} />
+          <TextField label="Prompt" defaultValue={prompt1} fullWidth multiline onChange={(e) => {setPrompt1(e.target.value)}}/>
               <Button
+                  sx={{marginTop:1, marginBottom:1}}
                   variant="contained"
                   endIcon={<SendIcon />}
-                  onClick={() => submitToGPT(values.prompt1, setPrompt1Processing, setPrompt1Characteristics, setPrompt1CharacteristicRows)}>
-                    Send
+                  onClick={() => submitToGPT(getPrompt1InitialPrimaryCategories(prompt1, characteristic), setPrompt1Processing, setPrompt1Characteristics, setPrompt1CharacteristicRows)}>
+                    Run
               </Button>
               {prompt1Processing ? <TimeProgressTracker expectedMiliseconds={20000} /> : null}
             <CharacteristicGrid primaryCategoryData={prompt1Characteristics} rows={prompt1CharacteristicRows} setRows={setPrompt1CharacteristicRows}/>
+            <Button
+                  sx={{marginTop:1, marginBottom:1}}
+                  variant="contained"
+                  endIcon={<Save />}
+                  onClick={() => {
+                    setResultCharacteristics(prompt1Characteristics)
+                    setResultCharacteristicRows(prompt1CharacteristicRows)
+                  }}>
+                    Overwrite Result
+              </Button>
         </AccordionDetails>
-      </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2-content"
-          id="panel2-header"
-        >
-          Prompt 2
-        </AccordionSummary>
-        <AccordionDetails>
-          She's a shit spy.
-        </AccordionDetails>
-      </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel3-content"
-          id="panel3-header"
-        >
-          Prompt 3
-        </AccordionSummary>
-        <AccordionDetails>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          malesuada lacus ex, sit amet blandit leo lobortis eget.
-        </AccordionDetails>
-        <AccordionActions>
-          <Button>Cancel</Button>
-          <Button>Agree</Button>
-        </AccordionActions>
       </Accordion>
           </Box>
           </>
     )}
     </Formik>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={6}>
+          <Card >
+            <CardHeader title={`Result - Character ${characteristic} Primary Categories`}/>
+            <CardContent>
+              <CharacteristicGrid primaryCategoryData={resultCharacteristics} rows={resultCharacteristicRows} setRows={setResultCharacteristicRows}/>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
   );
 }
 

@@ -103,17 +103,11 @@ export default function CharacteristicGrid({primaryCategoryData, rows, setRows}:
   };
 
   const columns: GridColDef[] = [
-    // { TODO: Implement Row Counter
-    // field: 'count' , 
-    // headerName: '#', 
-    // filterable: false,
-    // renderCell: (index) =>
-    //   index.api.getRowIndexRelativeToVisibleRows(index.row.code) + 1, },
-    { field: 'primaryCategory', headerName: 'Primary Category', width: 100, editable: true },
+    { field: 'primaryCategory', headerName: 'Primary Category', width: 130, editable: true },
     {
       field: 'primaryCategoryDescriptor',
       headerName: 'Descriptor',
-      width: 900,
+      flex: 1,
       align: 'left',
       headerAlign: 'left',
       editable: true,
@@ -167,18 +161,6 @@ export default function CharacteristicGrid({primaryCategoryData, rows, setRows}:
   ];
 
   return (
-    <Box
-      sx={{
-        height: 500,
-        width: '100%',
-        '& .actions': {
-          color: 'text.secondary',
-        },
-        '& .textPrimary': {
-          color: 'text.primary',
-        },
-      }}
-    >
       <DataGrid
         rows={rows}
         columns={columns}
@@ -193,8 +175,8 @@ export default function CharacteristicGrid({primaryCategoryData, rows, setRows}:
         slotProps={{
           toolbar: { setRows, setRowModesModel },
         }}
+        sx={{maxHeight: "89vh"}}
       />
-    </Box>
   );
 }
 

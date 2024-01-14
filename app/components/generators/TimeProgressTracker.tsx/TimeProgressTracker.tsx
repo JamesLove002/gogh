@@ -24,7 +24,7 @@ export default function TimeProgressTracker({expectedMiliseconds}: TimeProgressT
   }, []);
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%'}}>
       <LinearProgress variant="determinate" value={progress} />
     </Box>
   );

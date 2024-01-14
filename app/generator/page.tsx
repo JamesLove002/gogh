@@ -3,6 +3,6 @@ import GeneratorForm from "../components/generators/GeneratorForm";
 
 export default function Page() {
   return (
-        <GeneratorForm characteristic="Ideal"/>
+        <GeneratorForm/>
   );
 }
