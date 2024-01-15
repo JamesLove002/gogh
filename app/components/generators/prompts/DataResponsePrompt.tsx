@@ -30,14 +30,14 @@ export function DataResponsePrompt({
 }: DataResponsePromptProps) {
     return (
         <Box>
-            <TextField label="Iteration Prompt" defaultValue={prompt} fullWidth multiline onChange={(e) => {setPrompt(e.target.value)}}/>
+            {/* <TextField label="Iteration Prompt" defaultValue={prompt} fullWidth multiline onChange={(e) => {setPrompt(e.target.value)}}/> */}
             <Button
                   sx={{marginTop:1, marginBottom:1}}
                   variant="contained"
                   endIcon={<SendIcon />}
                   onClick={processFunction}
                   disabled={promptProcessing}>
-                    Run
+                    Generate
               </Button>
               {promptProcessing && <TimeProgressTracker expectedMiliseconds={25000} />}
 

@@ -4,16 +4,16 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 interface BasePromptAccordionProps {
     title: string;
     children: React.ReactNode;
-    isDefaultExpanded?: boolean;
+    expanded: boolean;
 }
 
 export function BasePromptAccordion({
     title,
     children,
-    isDefaultExpanded = false
+    expanded = false
 }: BasePromptAccordionProps) {
     return (
-        <Accordion defaultExpanded={isDefaultExpanded}>
+        <Accordion expanded={expanded}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1-content"

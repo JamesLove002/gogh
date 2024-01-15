@@ -59,7 +59,7 @@ export function getPrompt2OptionsNotCovered (characteristic: string) {
 "Items of Difficulty:"
 - dot points 
   
-"To fix this, I would suggest these Improvements:"
+To broaden, I would suggest adding these additional Primary Categories:
 - dot points`
 }
 
@@ -74,13 +74,19 @@ export function getPrompt3IterateBasedOnFeedback (prompt: string, characteristic
 }
 
 export function getPrompt4RemoveDuplicationAndSubCategories (characteristic: string) {
-  return `Merging those two lists of ${object} ${characteristic}s together, and noting that a subcategory could match one or more primary categories, which ${characteristic} might be duplicates, or better options to be a subcategory? 
-  Please provide a list of the final primary categories you would recommend to maximise richness, diversity and completeness while avoiding duplication or subcategories being on the primary category list, in the following format:
-  ${example}`
+  return `For the aim of a final primary category set which you would recommend to maximise richness, diversity and completeness while avoiding duplication or subcategories being on the primary category list:
+Iterate on the ${object} ${characteristic}s to merge duplicates, or remove options which would be better as subcategories. 
+
+Answer in the following format:
+"To consolidate, I would suggest these improvements:"
+- dot points`
 }
 
 export function getPrompt5CanItBeImproved(characteristic: string) {
-  `Given the objective to categorise all possible ${object} ${characteristic}s with a rich, diverse and comprehensive set of primary categories, what comments would you make about the final list of primary categories? Could it be further improved? If so, how?`
+return `Given the objective to categorise all possible ${object} ${characteristic}s with a rich, diverse and comprehensive set of primary categories, what comments would you make about the final list of primary categories? Could it be further improved? If so, how?
+Answer in the following format:
+"I would suggest these improvements:"
+- dot points`
 }
 
 export async function RunPrompt(openAI: OpenAI, assistant: OpenAI.Beta.Assistants.Assistant, thread: OpenAI.Beta.Threads.Thread, prompt: string) {

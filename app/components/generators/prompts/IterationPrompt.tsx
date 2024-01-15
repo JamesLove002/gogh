@@ -23,7 +23,7 @@ export function IterationPrompt({
 }: IterationPromptProps) {
     return (
       <Box>
-        <TextField label="Iteration Prompt" defaultValue={prompt} fullWidth multiline onChange={(e) => {setPrompt(e.target.value)}}/>
+        {/* <TextField label="Iteration Prompt" defaultValue={prompt} fullWidth multiline onChange={(e) => {setPrompt(e.target.value)}}/> */}
           <Button
             sx={{marginTop:1, marginBottom:1}}
             variant="contained"

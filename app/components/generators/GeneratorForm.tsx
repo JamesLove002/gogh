@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Box, Button, Card, CardContent, CardHeader, Checkbox, Grid, List, ListItem, TextField, Typography } from '@mui/material';
-import { RunPrompt, getAssistant, getPrompt1Default, getPrompt1InitialPrimaryCategories, getPrompt2OptionsNotCovered, getPrompt3Default, getPrompt3IterateBasedOnFeedback, getThread } from '@/services/gpt/gpt';
+import { RunPrompt, getAssistant, getPrompt1Default, getPrompt1InitialPrimaryCategories, getPrompt2OptionsNotCovered, getPrompt3Default, getPrompt3IterateBasedOnFeedback, getPrompt4RemoveDuplicationAndSubCategories, getPrompt5CanItBeImproved, getThread } from '@/services/gpt/gpt';
 import CharacteristicGrid, { getRowsFromCategoryData } from '../CharacteristicGrid';
 import { useEffect, useState } from 'react';
 import OpenAI from 'openai';
@@ -185,26 +185,45 @@ function GeneratorForm() {
   const [prompt1Characteristics, setPrompt1Characteristics] = useState<PrimaryCategoryData[]>(defaultPrimaryCategoryData);
   const [prompt1CharacteristicRows, setPrompt1CharacteristicRows] = React.useState(getRowsFromCategoryData(defaultPrimaryCategoryData));
   const [prompt1Processing, setPrompt1Processing] = useState(false);
+  const [prompt1AccordionOpen, setPrompt1AccordionOpen] = useState(true);
 
   //Prompt 2
   const [prompt2, setPrompt2] = useState<string>(getPrompt2OptionsNotCovered(characteristic))
   const [prompt2Feedback, setPrompt2Feedback] = useState<React.ReactNode>("")
   const [prompt2Processing, setPrompt2Processing] = useState(false);
+  const [prompt2AccordionOpen, setPrompt2AccordionOpen] = useState(false);
 
   //Prompt 3
   const [prompt3, setPrompt3] = useState<string>(getPrompt3Default(characteristic))
   const [prompt3Characteristics, setPrompt3Characteristics] = useState<PrimaryCategoryData[]>(defaultPrimaryCategoryData);
   const [prompt3CharacteristicRows, setPrompt3CharacteristicRows] = React.useState(getRowsFromCategoryData(defaultPrimaryCategoryData));
   const [prompt3Processing, setPrompt3Processing] = useState(false);
+  const [prompt3AccordionOpen, setPrompt3AccordionOpen] = useState(false);
+
+  //Prompt 4
+  const [prompt4, setPrompt4] = useState<string>(getPrompt4RemoveDuplicationAndSubCategories(characteristic))
+  const [prompt4Feedback, setPrompt4Feedback] = useState<React.ReactNode>("")
+  const [prompt4Processing, setPrompt4Processing] = useState(false);
+  const [prompt4AccordionOpen, setPrompt4AccordionOpen] = useState(false);
+
+  //Prompt 5
+  const [prompt5, setPrompt5] = useState<string>(getPrompt5CanItBeImproved(characteristic))
+  const [prompt5Feedback, setPrompt5Feedback] = useState<React.ReactNode>("")
+  const [prompt5Processing, setPrompt5Processing] = useState(false);
+  const [prompt5AccordionOpen, setPrompt5AccordionOpen] = useState(false);
+
 
   //Functions
   async function runAll() {
-    await submitToGPT(getPrompt1InitialPrimaryCategories(prompt1, characteristic), setPrompt1Processing, setPrompt1Characteristics, setPrompt1CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows);
-    await getFeedbackFromGPT(prompt2, setPrompt2Processing, setPrompt2Feedback);
-    await submitToGPT(getPrompt3IterateBasedOnFeedback(prompt3, characteristic), setPrompt3Processing, setPrompt3Characteristics, setPrompt3CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows)  
+    await submitToGPT(getPrompt1InitialPrimaryCategories(prompt1, characteristic), setPrompt1Processing, setPrompt1AccordionOpen, setPrompt1Characteristics, setPrompt1CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows);
+    await getFeedbackFromGPT(prompt2, setPrompt2Processing, setPrompt2AccordionOpen, setPrompt2Feedback);
+    await submitToGPT(getPrompt3IterateBasedOnFeedback(prompt3, characteristic), setPrompt3Processing, setPrompt3AccordionOpen, setPrompt3Characteristics, setPrompt3CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows);
+    await getFeedbackFromGPT(prompt4, setPrompt4Processing, setPrompt4AccordionOpen, setPrompt4Feedback);
+    await getFeedbackFromGPT(prompt5, setPrompt5Processing, setPrompt5AccordionOpen, setPrompt5Feedback);
   }
 
-  async function submitToGPT(prompt: string, processingStateSetter: React.Dispatch<React.SetStateAction<boolean>>, setPromptCharacteristics: React.Dispatch<React.SetStateAction<PrimaryCategoryData[]>>, setPromptCharacteristicRows: React.Dispatch<React.SetStateAction<GridValidRowModel[]>>, setResultCharacteristics: React.Dispatch<React.SetStateAction<PrimaryCategoryData[]>>, setResultCharacteristicRows: React.Dispatch<React.SetStateAction<GridValidRowModel[]>>) {
+  async function submitToGPT(prompt: string, processingStateSetter: React.Dispatch<React.SetStateAction<boolean>>, accordionStateSetter: React.Dispatch<React.SetStateAction<boolean>>, setPromptCharacteristics: React.Dispatch<React.SetStateAction<PrimaryCategoryData[]>>, setPromptCharacteristicRows: React.Dispatch<React.SetStateAction<GridValidRowModel[]>>, setResultCharacteristics: React.Dispatch<React.SetStateAction<PrimaryCategoryData[]>>, setResultCharacteristicRows: React.Dispatch<React.SetStateAction<GridValidRowModel[]>>) {
+    accordionStateSetter(true)
     processingStateSetter(true)
     if (assistant === undefined || thread === undefined) {
         console.error("assistant or thread undefined");
@@ -222,7 +241,8 @@ function GeneratorForm() {
     processingStateSetter(false)
     }
 
-  async function getFeedbackFromGPT(prompt: string, processingStateSetter: React.Dispatch<React.SetStateAction<boolean>>, setFeedbackResult: React.Dispatch<React.SetStateAction<React.ReactNode>>) {
+  async function getFeedbackFromGPT(prompt: string, processingStateSetter: React.Dispatch<React.SetStateAction<boolean>>, accordionStateSetter: React.Dispatch<React.SetStateAction<boolean>>, setFeedbackResult: React.Dispatch<React.SetStateAction<React.ReactNode>>) {
+    accordionStateSetter(true)
     processingStateSetter(true)
     if (assistant === undefined || thread === undefined) {
         console.error("assistant or thread undefined");
@@ -250,116 +270,125 @@ function GeneratorForm() {
 
     return (
     <Box><Typography variant="h5" sx={{marginTop:1, marginBottom:1}}>
-      Items of Difficulty:
-    </Typography>
-    <List sx = {{
- listStyleType: 'disc',
- pl: 2,
- '& .MuiListItem-root': {
-  display: 'list-item',
- },
-}}>
-      {difficulties.map((item) => {return (<ListItem>
-      {item}</ListItem>)})}
-    </List>
-    <Typography variant="h5" sx={{marginTop:1, marginBottom:1}}>
-    To fix this, I would suggest these Improvement:
+      Consider These Improvements:
     </Typography>
     <List>
-      {improvements.map((item) => {return (<ListItem>
-        <Checkbox
-      edge="start"
-      checked={true}
-      tabIndex={-1}
-      disableRipple
-    /><TextField multiline defaultValue={item} fullWidth/></ListItem>)})}
-    </List>
+      {improvements.map((item, iterator) => {return (<>
+      {/* <ListItem>
+        {difficulties[iterator]}
+      </ListItem> */}
+      <ListItem>
+      <Checkbox edge="start" checked={true} tabIndex={-1}/>
+      <TextField multiline defaultValue={item} fullWidth/></ListItem>
+      </>)})}
+      </List>
     </Box>)
   }
 
   return (
   <Box sx={{padding: 2}}> {/* //?? This seems like the wrong way to solve the padding problem.*/}
-    <Grid container spacing={2}>
-        <Grid item xs={12} sx={{height: "100%"}}>
-          <Card sx={{height: "100%"}}>
-            <CardHeader title={`Process - ${characteristic} Generator`}/>
-            <CardContent>
-          <Box sx={{ my: 2 }}>
-            <TextField label="Characteristic" defaultValue={characteristic} fullWidth onChange={(e) => {setCharacteristic(e.target.value)}}/>
-            <Button
-                  sx={{marginTop:1, marginBottom:1}}
+    <Button
+                 fullWidth
+                 sx={{marginTop:1, marginBottom:1}}
                   variant="contained"
                   endIcon={<SendIcon />}
                   onClick={() => {runAll()}}
                   disabled={prompt1Processing || prompt2Processing}>
                     Run All
               </Button>
-            <BasePromptAccordion
-              title={`Step 1 - Generate Starting ${characteristic} Primary Categories`} 
-              isDefaultExpanded={true}
-            >
-            <DataResponsePrompt 
-              prompt={prompt1} 
-              setPrompt={setPrompt1} 
-              processFunction={() => {submitToGPT(getPrompt1InitialPrimaryCategories(prompt1, characteristic), setPrompt1Processing, setPrompt1Characteristics, setPrompt1CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows)}} 
-              promptProcessing={prompt1Processing}
-              promptCharacteristics={prompt1Characteristics}
-              promptCharacteristicRows={prompt1CharacteristicRows}
-              setPromptCharacteristicRows={setPrompt1CharacteristicRows}
-              setResult={() => {
-                    setResultCharacteristics(prompt1Characteristics)
-                    setResultCharacteristicRows(prompt1CharacteristicRows)
-                  }}
-            />
-            </BasePromptAccordion>
-            <BasePromptAccordion title={`Step 2 - Get Feedback to Expand ${characteristic} set`} isDefaultExpanded={true}>
-              <IterationPrompt 
-              title='Request Feedback to Expand Categories'
-              prompt={prompt2}
-              setPrompt={setPrompt2}
-              processFunction={() => {getFeedbackFromGPT(prompt2, setPrompt2Processing, setPrompt2Feedback)}} 
-              buttonLabel='Request Feedback'
-              promptProcessing={prompt2Processing}
-              iterationMessage={prompt2Feedback}>
-              </IterationPrompt>
-              <Button onClick={() => {
-                setPrompt2Feedback(formatFeedbackResult(testString))
-              }}>Test!</Button>
-            </BasePromptAccordion>
-            <BasePromptAccordion
-              title={`Step 3 - Incorporate Selected Feedback`} 
-              isDefaultExpanded={true}
-            >
-            <DataResponsePrompt 
-              prompt={prompt3} 
-              setPrompt={setPrompt3}
-              processFunction={() => {submitToGPT(getPrompt3IterateBasedOnFeedback(prompt3, characteristic), setPrompt3Processing, setPrompt3Characteristics, setPrompt3CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows)}} 
-              promptProcessing={prompt3Processing}
-              promptCharacteristics={prompt3Characteristics}
-              promptCharacteristicRows={prompt3CharacteristicRows}
-              setPromptCharacteristicRows={setPrompt3CharacteristicRows}
-              setResult={() => {
-                    setResultCharacteristics(prompt3Characteristics)
-                    setResultCharacteristicRows(prompt3CharacteristicRows)
-                  }}
-            />
-            </BasePromptAccordion>
-          </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={6}>
-          <Card >
-            <CardHeader title={`Result - Character ${characteristic} Primary Categories`}/>
-            <CardContent>
-              <CharacteristicGrid primaryCategoryData={resultCharacteristics} rows={resultCharacteristicRows} setRows={setResultCharacteristicRows}/>
-            </CardContent>
-          </Card>
-        </Grid>
+    <Grid container spacing={2}>
+      <Grid item xs={7.5}>
+        <BasePromptAccordion
+          title={`Step 1 - Generate Starting ${characteristic} Primary Categories`} 
+          expanded={prompt1AccordionOpen}>
+          <DataResponsePrompt 
+            prompt={prompt1} 
+            setPrompt={setPrompt1} 
+            processFunction={() => {submitToGPT(getPrompt1InitialPrimaryCategories(prompt1, characteristic), setPrompt1Processing, setPrompt1AccordionOpen, setPrompt1Characteristics, setPrompt1CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows)}} 
+            promptProcessing={prompt1Processing}
+            promptCharacteristics={prompt1Characteristics}
+            promptCharacteristicRows={prompt1CharacteristicRows}
+            setPromptCharacteristicRows={setPrompt1CharacteristicRows}
+            setResult={() => {
+                  setResultCharacteristics(prompt1Characteristics)
+                  setResultCharacteristicRows(prompt1CharacteristicRows)
+                }}/>
+        </BasePromptAccordion>
       </Grid>
-      </Box>
-  );
-}
+      <Grid item xs={4.5}>
+        <BasePromptAccordion 
+          title={`Step 2 - Get Feedback to Expand ${characteristic} set`}
+          expanded={prompt2AccordionOpen}>
+          <IterationPrompt 
+                title='Request Feedback to Expand Categories'
+                prompt={prompt2}
+                setPrompt={setPrompt2}
+                processFunction={() => {getFeedbackFromGPT(prompt2, setPrompt2Processing, setPrompt2AccordionOpen, setPrompt2Feedback)}} 
+                buttonLabel='Request Feedback'
+                promptProcessing={prompt2Processing}
+                iterationMessage={prompt2Feedback}>
+          </IterationPrompt>
+        </BasePromptAccordion>
+      </Grid>
+      <Grid item xs={7.5}>
+        <BasePromptAccordion
+          title={`Step 3 - Incorporate Selected Feedback`} 
+          expanded={prompt3AccordionOpen}>
+          <DataResponsePrompt 
+            prompt={prompt3} 
+            setPrompt={setPrompt3}
+            processFunction={() => {submitToGPT(getPrompt3IterateBasedOnFeedback(prompt3, characteristic), setPrompt3Processing, setPrompt3AccordionOpen, setPrompt3Characteristics, setPrompt3CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows)}} 
+            promptProcessing={prompt3Processing}
+            promptCharacteristics={prompt3Characteristics}
+            promptCharacteristicRows={prompt3CharacteristicRows}
+            setPromptCharacteristicRows={setPrompt3CharacteristicRows}
+            setResult={() => {
+                  setResultCharacteristics(prompt3Characteristics)
+                  setResultCharacteristicRows(prompt3CharacteristicRows)
+                }}/>
+        </BasePromptAccordion>
+      </Grid>
+      <Grid item xs={4.5}>
+        <BasePromptAccordion 
+        title={`Step 4 - Get Feedback to Merge and Consolidate ${characteristic} set`}
+        expanded={prompt4AccordionOpen}>
+          <IterationPrompt 
+                title='Request Feedback to Merge and Consolidate'
+                prompt={prompt4}
+                setPrompt={setPrompt4}
+                processFunction={() => {getFeedbackFromGPT(prompt4, setPrompt4Processing, setPrompt4AccordionOpen, setPrompt4Feedback)}} 
+                buttonLabel='Request Feedback'
+                promptProcessing={prompt4Processing}
+                iterationMessage={prompt4Feedback}>
+          </IterationPrompt>
+        </BasePromptAccordion>
+      </Grid>
+      <Grid item xs={12}>
+        <BasePromptAccordion 
+        title={`Step 5 - Final Feedback`} 
+        expanded={prompt5AccordionOpen}>
+          <IterationPrompt 
+            title='Final Feedback to Iterate and Improve'
+            prompt={prompt5}
+            setPrompt={setPrompt5}
+            processFunction={() => {getFeedbackFromGPT(prompt5, setPrompt5Processing, setPrompt5AccordionOpen, setPrompt5Feedback)}} 
+            buttonLabel='Request Feedback'
+            promptProcessing={prompt5Processing}
+            iterationMessage={prompt5Feedback}>
+          </IterationPrompt>
+        </BasePromptAccordion>
+      </Grid>
+      <Grid item xs={12}>
+        <Card >
+          <CardHeader title={`Result - Character ${characteristic} Primary Categories`}/>
+          <CardContent>
+            <CharacteristicGrid primaryCategoryData={resultCharacteristics} rows={resultCharacteristicRows} setRows={setResultCharacteristicRows}/>
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
+    </Box>
+);}
 
 export default GeneratorForm;
 
