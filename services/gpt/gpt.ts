@@ -50,24 +50,26 @@ export function getPrompt1Default(characteristic: string) {
 export function getPrompt1InitialPrimaryCategories (prompt: string, characteristic: string) {
   return `${prompt}
 
-  ${example}`
+${example}`
 }
 
 export function getPrompt2OptionsNotCovered (characteristic: string) {
-  return `What ${characteristic}s might exist that don't fit within those categories? 
-  Provide the response in the following format: 
-  The following specific character ${characteristic} examples might be difficult to group under the preceeding list of primary categories, suggesting the existing list could be improved to make it richer and better for grouping all possible character ${characteristic}.
+  return `What specific character ${characteristic} examples might be difficult to group under the preceding list of primary categories, suggesting the existing list could be improved to make it richer and better for grouping all possible character ${characteristic}?
   
-  <Items of difficulty>
-
-  To fix this, I would suggest:
+"Items of Difficulty:"
+- dot points 
   
-  <Ideas for improvement>`
+"To fix this, I would suggest these Improvements:"
+- dot points`
 }
 
-export function getPrompt3IterateBasedOnFeedback (characteristic: string) {
-  return `Action that feedback to iterate the ${object} ${characteristic}s list and improve it. 
-  Produce the new response in the following format:
+export function getPrompt3Default(characteristic: string) {
+  return `Action that feedback to iterate the ${object} ${characteristic}s list and improve it.`
+}
+
+export function getPrompt3IterateBasedOnFeedback (prompt: string, characteristic: string) {
+  return `${prompt}
+
   ${example}`
 }
 

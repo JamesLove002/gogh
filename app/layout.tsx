@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Gogh - Generator
           </Typography>
-          <Button color="inherit">Character Creator | </Button>
+          <Button color="inherit">Character Creator</Button>
           <Button color="inherit">Characteristic Generator</Button>
         </Toolbar>
       </AppBar>
