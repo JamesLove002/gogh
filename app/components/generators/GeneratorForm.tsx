@@ -190,6 +190,7 @@ function GeneratorForm() {
   //Prompt 2
   const [prompt2, setPrompt2] = useState<string>(getPrompt2OptionsNotCovered(characteristic))
   const [prompt2Feedback, setPrompt2Feedback] = useState<React.ReactNode>("")
+  const [prompt2AdditionalElements, setPrompt2AdditionalElements] = useState<PrimaryCategoryData[]>([])
   const [prompt2Processing, setPrompt2Processing] = useState(false);
   const [prompt2AccordionOpen, setPrompt2AccordionOpen] = useState(false);
 
@@ -216,10 +217,10 @@ function GeneratorForm() {
   //Functions
   async function runAll() {
     await submitToGPT(getPrompt1InitialPrimaryCategories(prompt1, characteristic), setPrompt1Processing, setPrompt1AccordionOpen, setPrompt1Characteristics, setPrompt1CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows);
-    await getFeedbackFromGPT(prompt2, setPrompt2Processing, setPrompt2AccordionOpen, setPrompt2Feedback);
-    await submitToGPT(getPrompt3IterateBasedOnFeedback(prompt3, characteristic), setPrompt3Processing, setPrompt3AccordionOpen, setPrompt3Characteristics, setPrompt3CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows);
-    await getFeedbackFromGPT(prompt4, setPrompt4Processing, setPrompt4AccordionOpen, setPrompt4Feedback);
-    await getFeedbackFromGPT(prompt5, setPrompt5Processing, setPrompt5AccordionOpen, setPrompt5Feedback);
+    await getExpansionFeedbackFromGPT(prompt2, setPrompt2Processing, setPrompt2AccordionOpen, setPrompt2Feedback, setPrompt2AdditionalElements);
+    //await submitToGPT(getPrompt3IterateBasedOnFeedback(prompt3, characteristic), setPrompt3Processing, setPrompt3AccordionOpen, setPrompt3Characteristics, setPrompt3CharacteristicRows, setResultCharacteristics, setResultCharacteristicRows);
+    // await getFeedbackFromGPT(prompt4, setPrompt4Processing, setPrompt4AccordionOpen, setPrompt4Feedback);
+    // await getFeedbackFromGPT(prompt5, setPrompt5Processing, setPrompt5AccordionOpen, setPrompt5Feedback);
   }
 
   async function submitToGPT(prompt: string, processingStateSetter: React.Dispatch<React.SetStateAction<boolean>>, accordionStateSetter: React.Dispatch<React.SetStateAction<boolean>>, setPromptCharacteristics: React.Dispatch<React.SetStateAction<PrimaryCategoryData[]>>, setPromptCharacteristicRows: React.Dispatch<React.SetStateAction<GridValidRowModel[]>>, setResultCharacteristics: React.Dispatch<React.SetStateAction<PrimaryCategoryData[]>>, setResultCharacteristicRows: React.Dispatch<React.SetStateAction<GridValidRowModel[]>>) {
@@ -239,7 +240,29 @@ function GeneratorForm() {
     }
     
     processingStateSetter(false)
+  }
+
+  async function getExpansionFeedbackFromGPT(prompt: string, processingStateSetter: React.Dispatch<React.SetStateAction<boolean>>, accordionStateSetter: React.Dispatch<React.SetStateAction<boolean>>, setFeedbackResult: React.Dispatch<React.SetStateAction<React.ReactNode>>, setAdditionalElements: React.Dispatch<React.SetStateAction<PrimaryCategoryData[]>>) {
+    accordionStateSetter(true)
+    processingStateSetter(true)
+    if (assistant === undefined || thread === undefined) {
+        console.error("assistant or thread undefined");
+    } else {
+        console.log(prompt);
+        let result = await RunPrompt(openAI, assistant, thread, prompt);
+        // let resultElements = formatFeedbackResult(result)
+        // setFeedbackResult(resultElements);
+
+        const jsonArray = findJsonArray(result);
+        console.log(jsonArray);
+        console.log("Additional Elements");
+        setAdditionalElements(jsonArray);
+        setResultCharacteristics(resultCharacteristics.concat(jsonArray));
+        setResultCharacteristicRows(resultCharacteristicRows.concat(getRowsFromCategoryData(jsonArray)));
     }
+
+    processingStateSetter(false)
+  }
 
   async function getFeedbackFromGPT(prompt: string, processingStateSetter: React.Dispatch<React.SetStateAction<boolean>>, accordionStateSetter: React.Dispatch<React.SetStateAction<boolean>>, setFeedbackResult: React.Dispatch<React.SetStateAction<React.ReactNode>>) {
     accordionStateSetter(true)
@@ -258,10 +281,10 @@ function GeneratorForm() {
   }
   
   function formatFeedbackResult(input: string) {
-    const difficultySection = input.split('Difficulty')[1].split('To fix this')[0];
-    const difficulties = difficultySection.split('\n')
-      .filter(line => line.startsWith('-'))
-      .map(line => line.substring(2).trim());
+    // const difficultySection = input.split('Difficulty')[1].split('To fix this')[0];
+    // const difficulties = difficultySection.split('\n')
+    //   .filter(line => line.startsWith('-'))
+    //   .map(line => line.substring(2).trim());
 
     const improvementsSection = input.split('Improvements')[1];
     const improvements = improvementsSection.split('\n')
@@ -288,14 +311,14 @@ function GeneratorForm() {
   return (
   <Box sx={{padding: 2}}> {/* //?? This seems like the wrong way to solve the padding problem.*/}
     <Button
-                 fullWidth
-                 sx={{marginTop:1, marginBottom:1}}
-                  variant="contained"
-                  endIcon={<SendIcon />}
-                  onClick={() => {runAll()}}
-                  disabled={prompt1Processing || prompt2Processing}>
-                    Run All
-              </Button>
+        fullWidth
+        sx={{marginTop:1, marginBottom:1}}
+        variant="contained"
+        endIcon={<SendIcon />}
+        onClick={() => {runAll()}}
+        disabled={prompt1Processing || prompt2Processing}>
+          Run All
+    </Button>
     <Grid container spacing={2}>
       <Grid item xs={7.5}>
         <BasePromptAccordion
@@ -320,13 +343,13 @@ function GeneratorForm() {
           title={`Step 2 - Get Feedback to Expand ${characteristic} set`}
           expanded={prompt2AccordionOpen}>
           <IterationPrompt 
-                title='Request Feedback to Expand Categories'
-                prompt={prompt2}
-                setPrompt={setPrompt2}
-                processFunction={() => {getFeedbackFromGPT(prompt2, setPrompt2Processing, setPrompt2AccordionOpen, setPrompt2Feedback)}} 
-                buttonLabel='Request Feedback'
-                promptProcessing={prompt2Processing}
-                iterationMessage={prompt2Feedback}>
+            title='Request Feedback to Expand Categories'
+            prompt={prompt2}
+            setPrompt={setPrompt2}
+            processFunction={() => {getFeedbackFromGPT(prompt2, setPrompt2Processing, setPrompt2AccordionOpen, setPrompt2Feedback)}} 
+            buttonLabel='Request Feedback'
+            promptProcessing={prompt2Processing}
+            iterationMessage={prompt2Feedback}>
           </IterationPrompt>
         </BasePromptAccordion>
       </Grid>

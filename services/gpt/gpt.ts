@@ -56,11 +56,13 @@ ${example}`
 export function getPrompt2OptionsNotCovered (characteristic: string) {
   return `What specific character ${characteristic} examples might be difficult to group under the preceding list of primary categories, suggesting the existing list could be improved to make it richer and better for grouping all possible character ${characteristic}?
   
-"Items of Difficulty:"
+Items of Difficulty:
 - dot points 
-  
-To broaden, I would suggest adding these additional Primary Categories:
-- dot points`
+
+To address each of those difficulties, I would adding these additional or broadened Primary Categories: (Valid JSON Array)
+[{"primaryCategory": "Integrity", "primaryCategoryDescriptor": "Encompassing honor, honesty, and moral uprightness, with a steadfast adherence to a personal or communal ethical code."},
+{"primaryCategory": "Compassion", "primaryCategoryDescriptor": "Integrating empathy with acts of kindness and altruism, addressing the emotional and practical needs of others."},
+{"primaryCategory": "Serenity", "primaryCategoryDescriptor": "Capturing harmony, equilibrium, and peace, focusing on the pursuit of balance in one's inner life and external surroundings, and the reduction of strife."}]`
 }
 
 export function getPrompt3Default(characteristic: string) {
