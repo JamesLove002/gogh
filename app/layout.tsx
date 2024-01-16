@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AppBar, Box, Button, Card, CardContent, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Card, CardContent, IconButton, Link, Toolbar, Typography } from "@mui/material";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,8 +31,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Gogh - Generator
           </Typography>
-          <Button color="inherit">Character Creator</Button>
-          <Button color="inherit">Characteristic Generator</Button>
+          <Link href="/">Character Creator</Link>
+          <Link href="/generator">Characteristic Generator</Link>
         </Toolbar>
       </AppBar>
     </Box>
