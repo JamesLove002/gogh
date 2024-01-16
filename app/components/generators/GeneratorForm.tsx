@@ -157,7 +157,7 @@ const defaultPrimaryCategoryData: PrimaryCategoryData[] = [
 function GeneratorForm() {
   //Open AI setup
   const [openAI, setOpenAI] = useState(new OpenAI({
-      apiKey: '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',
+      apiKey: "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", //OPENAI_API_KEY won't work for some reason?
       dangerouslyAllowBrowser: true
   }));
   const [assistant, setAssistant] = useState<OpenAI.Beta.Assistants.Assistant>();
