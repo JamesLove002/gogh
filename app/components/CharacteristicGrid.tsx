@@ -1,11 +1,11 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
 import {
   GridRowsProp,
   GridRowModesModel,
@@ -18,18 +18,14 @@ import {
   GridRowId,
   GridRowModel,
   GridValidRowModel,
-  GridRowEditStopReasons,
-} from '@mui/x-data-grid';
-import {
-  randomId,
-} from '@mui/x-data-grid-generator';
-import { PrimaryCategoryData } from './generators/GeneratorForm';
+  GridRowEditStopReasons
+} from "@mui/x-data-grid";
+import { randomId } from "@mui/x-data-grid-generator";
+import { PrimaryCategoryData } from "./generators/GeneratorForm";
 
 interface EditToolbarProps {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
-  setRowModesModel: (
-    newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
-  ) => void;
+  setRowModesModel: (newModel: (oldModel: GridRowModesModel) => GridRowModesModel) => void;
 }
 
 function EditToolbar(props: EditToolbarProps) {
@@ -37,10 +33,10 @@ function EditToolbar(props: EditToolbarProps) {
 
   const handleClick = () => {
     const id = randomId();
-    setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
+    setRows((oldRows) => [...oldRows, { id, name: "", age: "", isNew: true }]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" }
     }));
   };
 
@@ -56,13 +52,13 @@ function EditToolbar(props: EditToolbarProps) {
 type CharacteristicGridProps = {
   primaryCategoryData: PrimaryCategoryData[];
   rows: GridValidRowModel[];
-  setRows: React.Dispatch<React.SetStateAction<GridValidRowModel[]>>
+  setRows: React.Dispatch<React.SetStateAction<GridValidRowModel[]>>;
 };
 
-export default function CharacteristicGrid({primaryCategoryData, rows, setRows}: CharacteristicGridProps) {
+export default function CharacteristicGrid({ primaryCategoryData, rows, setRows }: CharacteristicGridProps) {
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
 
-  const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
     }
@@ -83,7 +79,7 @@ export default function CharacteristicGrid({primaryCategoryData, rows, setRows}:
   const handleCancelClick = (id: GridRowId) => () => {
     setRowModesModel({
       ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+      [id]: { mode: GridRowModes.View, ignoreModifications: true }
     });
 
     const editedRow = rows.find((row) => row.id === id);
@@ -103,21 +99,21 @@ export default function CharacteristicGrid({primaryCategoryData, rows, setRows}:
   };
 
   const columns: GridColDef[] = [
-    { field: 'primaryCategory', headerName: 'Primary Category', width: 130, editable: true },
+    { field: "primaryCategory", headerName: "Primary Category", width: 130, editable: true },
     {
-      field: 'primaryCategoryDescriptor',
-      headerName: 'Descriptor',
+      field: "primaryCategoryDescriptor",
+      headerName: "Descriptor",
       flex: 1,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true,
+      align: "left",
+      headerAlign: "left",
+      editable: true
     },
     {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
       width: 100,
-      cellClassName: 'actions',
+      cellClassName: "actions",
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
@@ -127,56 +123,39 @@ export default function CharacteristicGrid({primaryCategoryData, rows, setRows}:
               icon={<SaveIcon />}
               label="Save"
               sx={{
-                color: 'primary.main',
+                color: "primary.main"
               }}
               onClick={handleSaveClick(id)}
             />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
+            <GridActionsCellItem icon={<CancelIcon />} label="Cancel" className="textPrimary" onClick={handleCancelClick(id)} color="inherit" />
           ];
         }
 
         return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
+          <GridActionsCellItem icon={<EditIcon />} label="Edit" className="textPrimary" onClick={handleEditClick(id)} color="inherit" />,
+          <GridActionsCellItem icon={<DeleteIcon />} label="Delete" onClick={handleDeleteClick(id)} color="inherit" />
         ];
-      },
-    },
+      }
+    }
   ];
 
   return (
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        slots={{
-          toolbar: EditToolbar,
-        }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel },
-        }}
-        sx={{maxHeight: "89vh"}}
-      />
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      editMode="row"
+      rowModesModel={rowModesModel}
+      onRowModesModelChange={handleRowModesModelChange}
+      onRowEditStop={handleRowEditStop}
+      processRowUpdate={processRowUpdate}
+      slots={{
+        toolbar: EditToolbar
+      }}
+      slotProps={{
+        toolbar: { setRows, setRowModesModel }
+      }}
+      sx={{ maxHeight: "89vh" }}
+    />
   );
 }
 
@@ -184,10 +163,10 @@ export function getRowsFromCategoryData(primaryCategoryData: PrimaryCategoryData
   var initialRows: GridValidRowModel[] = primaryCategoryData.map((primaryCategoryData) => {
     return {
       id: randomId(),
-      primaryCategory: primaryCategoryData.primaryCategory,
-      primaryCategoryDescriptor: primaryCategoryData.primaryCategoryDescriptor,
-    };  
-    })
+      primaryCategory: primaryCategoryData.title,
+      primaryCategoryDescriptor: primaryCategoryData.descriptor
+    };
+  });
 
   return initialRows;
 }

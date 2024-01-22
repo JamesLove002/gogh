@@ -1,12 +1,30 @@
 
+###
 GET http://localhost:3000/api
 
 ###
-
 POST http://localhost:3000/api
 Content-Type: application/json
 
 {
   "title": "Kara",
   "descriptor": "Super cool soul sister"
+}
+
+###
+PUT http://localhost:3000/api
+Content-Type: application/json
+
+{
+  "id": "65ab9c3187a5d706773b5a4b",
+  "title": "Cody",
+  "descriptor": ":)"
+}
+
+###
+DELETE http://localhost:3000/api
+Content-Type: application/json
+
+{
+  "id": "65ab9c9687a5d706773b5a50"
 }
